@@ -2,6 +2,8 @@ package it.rdev.blog.api.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.util.List;
+
 import javax.persistence.*;
 
 @Entity
@@ -16,6 +18,10 @@ public class User {
 	@Column
 	@JsonIgnore
 	private String password;
+	
+	@OneToMany(mappedBy = "autore", fetch = FetchType.LAZY, 
+			orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Articolo> articoli;
 
 	public String getUsername() {
 		return username;
@@ -33,4 +39,21 @@ public class User {
 		this.password = password;
 	}
 
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public List<Articolo> getArticoli() {
+		return articoli;
+	}
+
+	public void setArticoli(List<Articolo> articoli) {
+		this.articoli = articoli;
+	}
+	
+	
 }
