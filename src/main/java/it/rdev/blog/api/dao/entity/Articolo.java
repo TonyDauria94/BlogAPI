@@ -48,14 +48,14 @@ public class Articolo {
 	private User autore;
 	
 	@ManyToOne()
-	@JoinColumn(name = "categoria", referencedColumnName="nome")
+	@JoinColumn(name = "categoria", referencedColumnName="categoria")
 	private Categoria categoria;
 
 	@ManyToMany
 	@JoinTable(
 	  name = "articolo_tag", 
 	  joinColumns = @JoinColumn(name = "id_articolo"), 
-	  inverseJoinColumns = @JoinColumn(name = "nome_tag"))
+	  inverseJoinColumns = @JoinColumn(name = "tag"))
 	private List<Tag> tags;
 	
 	public long getId() {

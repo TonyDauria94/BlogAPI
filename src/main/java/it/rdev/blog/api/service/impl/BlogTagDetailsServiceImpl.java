@@ -33,7 +33,7 @@ public class BlogTagDetailsServiceImpl implements BlogTagDetailsService {
 	
 	private TagDTO toDto(Tag t) {
 		TagDTO dto = new TagDTO();
-		dto.setNome(t.getNome());
+		dto.setTag(t.getTag());
 		return dto;
 	}
 	

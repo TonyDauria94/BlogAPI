@@ -13,18 +13,18 @@ import javax.persistence.Table;
 public class Tag {
 
 	@Id
-	@Column(name = "nome")
-	private String nome;
+	@Column(name = "tag")
+	private String tag;
 	
 	@ManyToMany(mappedBy = "tags")
 	private List<Articolo> articoli;
 
-	public String getNome() {
-		return nome;
+	public String getTag() {
+		return tag;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setTag(String tag) {
+		this.tag = tag;
 	}
 
 	public List<Articolo> getArticoli() {

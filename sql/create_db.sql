@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS users (
 
 
 CREATE TABLE IF NOT  EXISTS categorie (
-  nome varchar(25) NOT NULL,
+  categoria varchar(25) NOT NULL,
   
-  PRIMARY KEY (nome)
+  PRIMARY KEY (categoria)
 );
 
 
@@ -34,17 +34,17 @@ CREATE TABLE IF NOT  EXISTS articoli (
 
 
 CREATE TABLE IF NOT  EXISTS tag (
-  nome varchar(25) NOT NULL,
+  tag varchar(25) NOT NULL,
   
-  PRIMARY KEY (nome)
+  PRIMARY KEY (tag)
 );
 
 
 CREATE TABLE IF NOT EXISTS articolo_tag (
   id_articolo bigint unsigned, 	  ## foreign key verso articolo
-  nome_tag	 varchar(25),		  ## foreign key verso tag
+  tag	 varchar(25),		 	  ## foreign key verso tag
 
-  PRIMARY KEY (id_articolo, nome_tag)
+  PRIMARY KEY (id_articolo, tag)
 );
 
 
@@ -58,7 +58,7 @@ ADD CONSTRAINT `fk_articoli_users`
 ALTER TABLE articoli
 ADD CONSTRAINT `fk_articoli_categorie` 
 	FOREIGN KEY (`categoria`) 
-	REFERENCES `categorie`(`nome`)
+	REFERENCES `categorie`(`categoria`)
 	ON DELETE CASCADE;
 
 ALTER TABLE articolo_tag
@@ -69,8 +69,8 @@ ADD CONSTRAINT `fk_articolo_tag_articoli`
 
 ALTER TABLE articolo_tag
 ADD CONSTRAINT `fk_articolo_tag_tag` 
-	FOREIGN KEY (`nome_tag`) 
-	REFERENCES `tag`(`nome`)
+	FOREIGN KEY (`tag`) 
+	REFERENCES `tag`(`tag`)
 	ON DELETE CASCADE;
 
 INSERT INTO categorie VALUES ('viaggi'), ('tecnologia'), ('cibo');

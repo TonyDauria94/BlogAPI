@@ -35,7 +35,7 @@ public class BlogCategoriaDetailsServiceImpl implements BlogCategoriaDetailsServ
 	 * */
 	private CategoriaDTO toDto(Categoria c) {
 		CategoriaDTO dto = new CategoriaDTO();
-		dto.setNome(c.getNome());
+		dto.setCategoria(c.getCategoria());
 		return dto;
 	}
 	

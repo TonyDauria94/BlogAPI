@@ -15,19 +15,19 @@ import javax.persistence.Table;
 public class Categoria {
 
 	@Id
-	@Column(name = "nome")
-	private String nome;
+	@Column(name = "categoria")
+	private String categoria;
 	
 	@OneToMany(mappedBy = "categoria", fetch = FetchType.LAZY, 
 			orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Articolo> articoli;
 
-	public String getNome() {
-		return nome;
+	public String getCategoria() {
+		return categoria;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
+	public void setCategoria(String categoria) {
+		this.categoria = categoria;
 	}
 	
 	
