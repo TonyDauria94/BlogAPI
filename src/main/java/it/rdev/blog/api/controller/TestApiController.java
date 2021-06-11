@@ -13,9 +13,10 @@ public class TestApiController {
 	
 	@Autowired
 	private JwtTokenUtil jwtUtil;
-
+	
 	@GetMapping({ "/api/test" })
 	public String get() {
+	
 		return "Risorsa Accesibile";
 	}
 	
