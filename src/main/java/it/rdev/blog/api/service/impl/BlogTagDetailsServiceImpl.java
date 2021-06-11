@@ -16,12 +16,12 @@ import it.rdev.blog.api.service.BlogTagDetailsService;
 public class BlogTagDetailsServiceImpl implements BlogTagDetailsService {
 	
 	@Autowired
-	private TagDao cd;
+	private TagDao tagDao;
 	
 	@Override
 	public List<TagDTO> findAll() {
 		
-		Iterable<Tag> it = cd.findAll();
+		Iterable<Tag> it = tagDao.findAll();
 		List<TagDTO> list = new ArrayList<>();
 		for (Tag t : it) {
 			list.add(toDto(t));

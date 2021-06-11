@@ -8,4 +8,6 @@ public interface BlogArticoloDetailsService {
 
 	public List<ArticoloDTO> findAll();
 	
+	public ArticoloDTO findById(long id);
+	
 }

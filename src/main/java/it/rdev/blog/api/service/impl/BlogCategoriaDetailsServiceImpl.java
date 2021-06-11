@@ -15,12 +15,12 @@ import it.rdev.blog.api.service.BlogCategoriaDetailsService;
 public class BlogCategoriaDetailsServiceImpl implements BlogCategoriaDetailsService {
 
 	@Autowired
-	private CategoriaDao cd;
+	private CategoriaDao categoriaDao;
 	
 	@Override
 	public List<CategoriaDTO> findAll() {
 		
-		Iterable<Categoria> it = cd.findAll();
+		Iterable<Categoria> it = categoriaDao.findAll();
 		List<CategoriaDTO> list = new ArrayList<>();
 		for (Categoria c : it) {
 			list.add(toDto(c)); // conversione in dto

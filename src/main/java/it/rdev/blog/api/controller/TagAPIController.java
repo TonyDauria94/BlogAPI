@@ -11,10 +11,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.rdev.blog.api.controller.dto.TagDTO;
+import it.rdev.blog.api.exception.ResourceNotFoundException;
 import it.rdev.blog.api.service.BlogTagDetailsService;
 
 @RestController
-public class TagController {
+public class TagAPIController {
 
 	@Autowired
 	private BlogTagDetailsService tagService;
@@ -26,15 +27,15 @@ public class TagController {
 		List<TagDTO> list = tagService.findAll();
 		
 		if(list.isEmpty()) 
-			throw new RuntimeException("Non sono presenti tags.");
+			throw new ResourceNotFoundException("Non sono presenti tag.");
 		
 		return list;
 	}
 
 	
-	@ExceptionHandler(RuntimeException.class)
+	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(code = HttpStatus.NOT_FOUND)
-	public String handleRuntimeException(RuntimeException ex) {
+	public String handleRuntimeException(ResourceNotFoundException ex) {
 		return ex.getMessage();
 	}
 }

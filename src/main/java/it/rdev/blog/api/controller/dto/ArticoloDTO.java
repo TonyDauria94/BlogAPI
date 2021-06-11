@@ -14,9 +14,9 @@ public class ArticoloDTO {
 	private LocalDateTime dataCreazione;
 	private String stato;
 	
-	private UserDTO autore;
-	private CategoriaDTO categoria;
-	private List<TagDTO> tags;
+	private String autore;
+	private String categoria;
+	private List<String> tags;
 	
 	public long getId() {
 		return id;
@@ -82,27 +82,27 @@ public class ArticoloDTO {
 		this.stato = stato;
 	}
 
-	public UserDTO getAutore() {
+	public String getAutore() {
 		return autore;
 	}
 
-	public void setAutore(UserDTO autore) {
+	public void setAutore(String autore) {
 		this.autore = autore;
 	}
 
-	public CategoriaDTO getCategoria() {
+	public String getCategoria() {
 		return categoria;
 	}
 
-	public void setCategoria(CategoriaDTO categoria) {
+	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
 
-	public List<TagDTO> getTags() {
+	public List<String> getTags() {
 		return tags;
 	}
 
-	public void setTags(List<TagDTO> tags) {
+	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
 	
