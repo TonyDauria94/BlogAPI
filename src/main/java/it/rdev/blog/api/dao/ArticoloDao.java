@@ -8,6 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import it.rdev.blog.api.dao.entity.Articolo;
+import it.rdev.blog.api.dao.entity.User;
 
 public interface ArticoloDao extends CrudRepository<Articolo, Integer> {
 	
@@ -17,8 +18,12 @@ public interface ArticoloDao extends CrudRepository<Articolo, Integer> {
 	
 	List<Articolo> findByStato(String stato);
 	
-	@Query("FROM Articolo a WHERE a.stato = :stato or (a.stato = :stato2 and autore = :autore)")
-	List<Articolo> findProva(@Param("stato") String stato, 
-			@Param("stato2") String stato2, 
-			@Param("autore") String autore);
+	/* Query che permette di selezionare tutti gli articoli con stato1 
+	 * uniti ad una serie di altri articoli che hanno uno stato2 ed uno specifico autore.
+	 * 
+	 * inserento come parametri Stato.PUBBLICATO, Stato.BOZZA, 
+	 * 
+	 * */
+	@Query("FROM Articolo a WHERE a.stato = 'pubblicato' or (a.stato = 'bozza' and a.autore = :autore)")
+	List<Articolo> findAll(@Param("autore") User autore);
 }

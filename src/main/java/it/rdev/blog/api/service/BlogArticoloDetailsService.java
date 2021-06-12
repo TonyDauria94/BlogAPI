@@ -6,8 +6,12 @@ import it.rdev.blog.api.controller.dto.ArticoloDTO;
 
 public interface BlogArticoloDetailsService {
 
-	public List<ArticoloDTO> findAll();
+	public List<ArticoloDTO> getAll();
 	
-	public ArticoloDTO findById(long id);
+	public ArticoloDTO getById(long id);
+	
+	public List<ArticoloDTO> getbyStato(ArticoloDTO.Stato stato);
+	
+	public List<ArticoloDTO> getPubbliciAndBozze(long id_utente);
 	
 }

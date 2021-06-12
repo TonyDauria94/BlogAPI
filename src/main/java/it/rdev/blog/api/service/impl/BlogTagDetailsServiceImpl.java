@@ -19,7 +19,7 @@ public class BlogTagDetailsServiceImpl implements BlogTagDetailsService {
 	private TagDao tagDao;
 	
 	@Override
-	public List<TagDTO> findAll() {
+	public List<TagDTO> getAll() {
 		
 		Iterable<Tag> it = tagDao.findAll();
 		List<TagDTO> list = new ArrayList<>();

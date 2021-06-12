@@ -6,6 +6,6 @@ import it.rdev.blog.api.controller.dto.CategoriaDTO;
 
 public interface BlogCategoriaDetailsService {
 
-	public List<CategoriaDTO> findAll();
+	public List<CategoriaDTO> getAll();
 	
 }

@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
+import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
 import it.rdev.blog.api.dao.ArticoloDao;
 import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Tag;
+import it.rdev.blog.api.dao.entity.User;
 import it.rdev.blog.api.service.BlogArticoloDetailsService;
 
 @Service
@@ -19,8 +21,9 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 	@Autowired
 	private ArticoloDao articoloDao;
 	
+	/* Restituisce tuttti gli articoli */
 	@Override
-	public List<ArticoloDTO> findAll() {
+	public List<ArticoloDTO> getAll() {
 		
 		Iterable<Articolo> it = articoloDao.findAll();
 		List<ArticoloDTO> list = new ArrayList<>();
@@ -32,8 +35,9 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 		
 	}
 	
+	/* Restituisce un articolo tramite il suo identificativo.*/
 	@Override
-	public ArticoloDTO findById(long id) {
+	public ArticoloDTO getById(long id) {
 
 		Optional<Articolo> op = articoloDao.findById(id);
 		
@@ -46,7 +50,30 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 		return null;
 	}
 	
+	@Override
+	public List<ArticoloDTO> getbyStato(Stato stato) {
+		Iterable<Articolo> it = articoloDao.findByStato(stato.getValore());
+		List<ArticoloDTO> list = new ArrayList<>();
+		for (Articolo a : it) {
+			list.add(toDto(a));
+		}
+		
+		return list;
+	}
 
+	/* Restituisce tutti gli articoli pubblici e le bozze di uno specifico utente.
+	 * */
+	@Override
+	public List<ArticoloDTO> getPubbliciAndBozze(long id_utente) {
+		Iterable<Articolo> it = articoloDao.findAll(new User().setId(id_utente));
+		List<ArticoloDTO> list = new ArrayList<>();
+		for (Articolo a : it) {
+			list.add(toDto(a));
+		}
+		
+		return list;
+	}
+	
 	/*
 	 * Converte in dto.
 	 * */
@@ -85,5 +112,6 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 		
 		return dto;
 	}
+
 
 }

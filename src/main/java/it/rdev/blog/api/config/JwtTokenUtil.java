@@ -31,10 +31,18 @@ public class JwtTokenUtil implements Serializable {
 	 * @return String che rappresenta lo username dell'utente loggato
 	 */
 	public String getUsernameFromToken(String token) {
-		return getClaimFromToken(token, Claims::getSubject);
+		// se il token comincia con bearer, lo rimuovo
+		if (token != null && token.startsWith("Bearer "))
+			token = token.substring(7);
+		
+			return getClaimFromToken(token, Claims::getSubject);
 	}
 	
 	public Long getUserIdFromToken(String token) {
+		// se il token comincia con bearer, lo rimuovo
+		if (token != null && token.startsWith("Bearer "))
+			token = token.substring(7);
+		
 		return Long.parseLong(getClaimFromToken(token, Claims::getIssuer));
 	}
 

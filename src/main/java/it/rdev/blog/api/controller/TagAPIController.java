@@ -14,7 +14,11 @@ import it.rdev.blog.api.controller.dto.TagDTO;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
 import it.rdev.blog.api.service.BlogTagDetailsService;
 
+/* Controller per la gestione dei tag.
+ * Il servizio è accessibile dall'endpoint /api/tag.
+ * */
 @RestController
+@RequestMapping("/api/tag")
 public class TagAPIController {
 
 	@Autowired
@@ -23,11 +27,11 @@ public class TagAPIController {
 	/* @return Tutti i tag presenti sul database. 
 	 * @throws ResourceNotFoundException se nel db non sono presenti tag.
 	 * */
-	@RequestMapping(path = "/api/tag", method = RequestMethod.GET)
+	@RequestMapping(path = "", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public List<TagDTO> get() {
 		
-		List<TagDTO> list = tagService.findAll();
+		List<TagDTO> list = tagService.getAll();
 		
 		if(list.isEmpty()) 
 			throw new ResourceNotFoundException("Non sono presenti tag.");

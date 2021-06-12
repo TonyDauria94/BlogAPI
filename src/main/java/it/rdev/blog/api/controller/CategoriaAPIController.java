@@ -14,7 +14,11 @@ import it.rdev.blog.api.controller.dto.CategoriaDTO;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
 import it.rdev.blog.api.service.BlogCategoriaDetailsService;
 
+/* Controller per la gestione delle categorie.
+ * Il servizio è accessibile dall'endpoint /api/categoria.
+ * */
 @RestController
+@RequestMapping("/api/categoria")
 public class CategoriaAPIController {
 	
 	@Autowired
@@ -23,11 +27,11 @@ public class CategoriaAPIController {
 	/* @return Tutte le categorie presenti sul database.
 	 * @throws ResourceNotFoundException se nel db non sono presenti categorie.
 	 * */
-	@RequestMapping(path = "/api/categoria", method = RequestMethod.GET)
+	@RequestMapping(path = "", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public List<CategoriaDTO> get() {
 		
-		List<CategoriaDTO> list = categoryService.findAll();
+		List<CategoriaDTO> list = categoryService.getAll();
 		
 		if(list.isEmpty()) 
 			throw new ResourceNotFoundException("Non sono presenti categorie.");

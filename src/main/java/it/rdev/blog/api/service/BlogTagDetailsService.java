@@ -6,6 +6,6 @@ import it.rdev.blog.api.controller.dto.TagDTO;
 
 public interface BlogTagDetailsService {
 
-	public List<TagDTO> findAll();
+	public List<TagDTO> getAll();
 	
 }

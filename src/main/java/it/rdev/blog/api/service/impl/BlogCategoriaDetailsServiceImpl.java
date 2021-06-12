@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import it.rdev.blog.api.controller.dto.CategoriaDTO;
 import it.rdev.blog.api.dao.CategoriaDao;
-import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Categoria;
 import it.rdev.blog.api.service.BlogCategoriaDetailsService;
 
@@ -19,7 +18,7 @@ public class BlogCategoriaDetailsServiceImpl implements BlogCategoriaDetailsServ
 	private CategoriaDao categoriaDao;
 	
 	@Override
-	public List<CategoriaDTO> findAll() {
+	public List<CategoriaDTO> getAll() {
 		
 		Iterable<Categoria> it = categoriaDao.findAll();
 		List<CategoriaDTO> list = new ArrayList<>();
