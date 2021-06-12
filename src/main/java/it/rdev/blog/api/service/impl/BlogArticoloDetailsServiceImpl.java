@@ -21,6 +21,12 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 	@Autowired
 	private ArticoloDao articoloDao;
 	
+	
+	@Override
+	public void post(ArticoloDTO articolo) {
+		articoloDao.save(toEntity(articolo));
+	}
+	
 	/* Restituisce tuttti gli articoli */
 	@Override
 	public List<ArticoloDTO> getAll() {
@@ -91,10 +97,10 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 		
 		switch (a.getStato()) {
 		case "pubblicato":
-			stato = ArticoloDTO.Stato.PUBBLICATO;
+			stato = ArticoloDTO.Stato.pubblicato;
 			break;
 		case "bozza":
-			stato = ArticoloDTO.Stato.BOZZA;
+			stato = ArticoloDTO.Stato.bozza;
 			break;
 		}
 		
@@ -113,5 +119,38 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 		return dto;
 	}
 
+	private Articolo toEntity(ArticoloDTO dto) {
+		Articolo a = new Articolo();
+
+		a.setId(dto.getId());
+		a.setTitolo(dto.getTitolo());
+		a.setSottotitolo(dto.getSottotitolo());
+		a.setTesto(dto.getTesto());
+		a.setDataPublicazione(dto.getDataPublicazione());
+		a.setDataModifica(dto.getDataModifica());
+		a.setDataCreazione(dto.getDataCreazione());
+		a.setStato(dto.getStato());
+		
+		User u = new User();
+		u.setId(dto.getAutoreId());
+		u.setUsername(dto.getAutore());
+		a.setAutore(u);
+		
+		a.setCategoria(dto.getCategoria());
+		
+		List<Tag> tags = new ArrayList<>();
+		
+		if (dto.getTags() != null) {
+			for (String s : dto.getTags()) {
+				Tag t = new Tag();
+				t.setTag(s);
+				tags.add(t);
+			}
+		}
+		
+		a.setTags(tags);
+		
+		return a;
+	}
 
 }

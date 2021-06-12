@@ -3,6 +3,8 @@ package it.rdev.blog.api.controller.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class ArticoloDTO {
 	
 	/** Enumeratore per lo stato dell'articolo.
@@ -15,8 +17,8 @@ public class ArticoloDTO {
 	 */
 	public enum Stato {
 
-		PUBBLICATO("pubblicato"),
-		BOZZA("bozza");
+		pubblicato("pubblicato"),
+		bozza("bozza");
 		
 		private String valore;
 		
@@ -30,7 +32,7 @@ public class ArticoloDTO {
 		
 	}
 
-	private long id;
+	private Long id;
 	private String titolo;
 	private String sottotitolo;
 	private String testo;
@@ -40,10 +42,15 @@ public class ArticoloDTO {
 	private Stato stato;
 	
 	private String autore;
+	
+	// Salvo anche l'id dell'autore, ma ignoro il campo in caso di serializzazione.
+	// Questo campo ci farà risparmiare qualche query.
+	@JsonIgnore
+	private Long autoreId;
 	private String categoria;
 	private List<String> tags;
 	
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
@@ -101,7 +108,9 @@ public class ArticoloDTO {
 
 	/* Per lo stato restituisco il valore e non l'enum. */
 	public String getStato() {
-		return stato.getValore();
+		if (stato != null)
+			return stato.getValore();
+		return null;
 	}
 
 	public void setStato(Stato stato) {
@@ -114,6 +123,14 @@ public class ArticoloDTO {
 
 	public void setAutore(String autore) {
 		this.autore = autore;
+	}
+
+	public Long getAutoreId() {
+		return autoreId;
+	}
+
+	public void setAutoreId(Long autoreId) {
+		this.autoreId = autoreId;
 	}
 
 	public String getCategoria() {

@@ -6,6 +6,8 @@ import it.rdev.blog.api.controller.dto.ArticoloDTO;
 
 public interface BlogArticoloDetailsService {
 
+	public void post(ArticoloDTO articolo);	
+	
 	public List<ArticoloDTO> getAll();
 	
 	public ArticoloDTO getById(long id);

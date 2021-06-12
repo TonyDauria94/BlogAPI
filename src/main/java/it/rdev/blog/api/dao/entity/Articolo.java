@@ -20,15 +20,15 @@ public class Articolo {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 	
-	@Column(name = "titolo")
+	@Column(name = "titolo", nullable = false)
 	private String titolo;
 	
 	@Column(name = "sottotitolo")
 	private String sottotitolo;
 	
-	@Column(name = "testo")
+	@Column(name = "testo", nullable = false)
 	private String testo;
 	
 	@Column(name = "data_publicazione")
@@ -37,14 +37,14 @@ public class Articolo {
 	@Column(name = "data_modifica")
 	private LocalDateTime dataModifica;
 	
-	@Column(name = "data_creazione")
+	@Column(name = "data_creazione", nullable = false)
 	private LocalDateTime dataCreazione;
 	
-	@Column(name = "stato")
+	@Column(name = "stato", nullable = false)
 	private String stato;
 	
 	@ManyToOne()
-	@JoinColumn(name = "autore", referencedColumnName="id")
+	@JoinColumn(name = "autore", referencedColumnName="id", nullable = false)
 	private User autore;
 	
 	// Dato che il nome della categoria è anche la chiave primaria
@@ -53,6 +53,7 @@ public class Articolo {
 	
 	// @ManyToOne()
 	// @JoinColumn(name = "categoria", referencedColumnName="categoria")
+	@Column(name = "categoria", nullable = false)
 	private String categoria;
 
 	@ManyToMany
@@ -62,11 +63,11 @@ public class Articolo {
 	  inverseJoinColumns = @JoinColumn(name = "tag"))
 	private List<Tag> tags;
 	
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

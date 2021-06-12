@@ -1,12 +1,17 @@
 package it.rdev.blog.api.controller;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,7 +24,7 @@ import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
 import it.rdev.blog.api.service.BlogArticoloDetailsService;
 
-/* Classe controller che permettae l'accesso e la modifica degli articoli.
+/* Classe controller che permette l'accesso e la modifica degli articoli.
  * Il servizio è accessibile dall'endpoint /api/articolo.
  * */
 @RestController
@@ -31,6 +36,7 @@ public class ArticoloAPIController {
 	
 	@Autowired
 	private BlogArticoloDetailsService articoloService;
+	
 	
 	@RequestMapping(path = "", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
@@ -53,7 +59,7 @@ public class ArticoloAPIController {
 			
 		} else { // utente anonimo
 			// Restituisco gli articoli che hanno lo stato pubblicato
-			list = articoloService.getbyStato(Stato.PUBBLICATO);
+			list = articoloService.getbyStato(Stato.pubblicato);
 			
 		}
 		
@@ -64,7 +70,7 @@ public class ArticoloAPIController {
 		return list;
 	}
 	
-	
+	/* Restituisce un articolo dato il suo id. */
 	@RequestMapping(path = "/{id:\\d+}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public ArticoloDTO getById(
@@ -79,7 +85,7 @@ public class ArticoloAPIController {
 			throw new ResourceNotFoundException("Articolo non trovato");
 		
 		// se l'utente ha un token e l'articolo è una bozza
-		if (token != null && Stato.BOZZA.getValore().equals(articolo.getStato())) {
+		if (token != null && Stato.bozza.getValore().equals(articolo.getStato())) {
 			// recupero lo username dell'utente
 			String username = jwtUtil.getUsernameFromToken(token);
 			
@@ -93,6 +99,41 @@ public class ArticoloAPIController {
 		
 		return articolo;
 		
+	}
+	
+	/* Inserisce un nuovo articolo */
+	@RequestMapping(path = "", method = RequestMethod.POST,  consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void post (
+			@RequestHeader(required = true, value = "Authorization") String token,
+			@RequestBody ArticoloDTO articolo) {
+		
+		if (token != null) {
+			// recupero lo username dell'utente
+			Long id = jwtUtil.getUserIdFromToken(token);
+			String username = jwtUtil.getUsernameFromToken(token);
+			
+			// imposto l'autore dell'articolo
+			articolo.setAutoreId(id);
+			articolo.setAutore(username);
+			// imposto data creazione, data modifica.
+			articolo.setDataCreazione(LocalDateTime.now());
+			articolo.setDataModifica(LocalDateTime.now());
+			
+			// imposto lo stato a bozza.
+			articolo.setStato(Stato.bozza);
+			
+			// effettuo la insert.
+			articoloService.post(articolo);
+		} 
+		
+	}
+	
+	// Gestisce eccezioni lanciate quando vengono inseriti dati errati.
+	@ExceptionHandler({SQLIntegrityConstraintViolationException.class, PropertyValueException.class})
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	public String handleSQLIntegrityConstraintViolationException(Exception ex) {
+		return ex.getMessage();
 	}
 	
 	@ExceptionHandler(ResourceNotFoundException.class)
