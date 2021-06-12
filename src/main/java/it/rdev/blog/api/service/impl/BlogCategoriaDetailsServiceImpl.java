@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import it.rdev.blog.api.controller.dto.CategoriaDTO;
 import it.rdev.blog.api.dao.CategoriaDao;
+import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Categoria;
 import it.rdev.blog.api.service.BlogCategoriaDetailsService;
 
@@ -36,6 +37,7 @@ public class BlogCategoriaDetailsServiceImpl implements BlogCategoriaDetailsServ
 	private CategoriaDTO toDto(Categoria c) {
 		CategoriaDTO dto = new CategoriaDTO();
 		dto.setCategoria(c.getCategoria());
+		
 		return dto;
 	}
 	

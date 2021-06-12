@@ -47,9 +47,13 @@ public class Articolo {
 	@JoinColumn(name = "autore", referencedColumnName="id")
 	private User autore;
 	
-	@ManyToOne()
-	@JoinColumn(name = "categoria", referencedColumnName="categoria")
-	private Categoria categoria;
+	// Dato che il nome della categoria è anche la chiave primaria
+	// impostare una relazione tra le tabelle ci costerebbe una query inutile
+	// in più.
+	
+	// @ManyToOne()
+	// @JoinColumn(name = "categoria", referencedColumnName="categoria")
+	private String categoria;
 
 	@ManyToMany
 	@JoinTable(
@@ -130,11 +134,11 @@ public class Articolo {
 		this.autore = autore;
 	}
 
-	public Categoria getCategoria() {
+	public String getCategoria() {
 		return categoria;
 	}
 
-	public void setCategoria(Categoria categoria) {
+	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
 

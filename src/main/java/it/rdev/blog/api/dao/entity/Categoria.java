@@ -29,7 +29,13 @@ public class Categoria {
 	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
-	
-	
+
+	public List<Articolo> getArticoli() {
+		return articoli;
+	}
+
+	public void setArticoli(List<Articolo> articoli) {
+		this.articoli = articoli;
+	}
 	
 }

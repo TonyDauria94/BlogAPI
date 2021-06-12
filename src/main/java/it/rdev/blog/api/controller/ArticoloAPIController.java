@@ -42,11 +42,7 @@ public class ArticoloAPIController {
 		ArticoloDTO articolo = articoloService.findById(id);
 		
 		if(articolo == null) 
-			throw new ResourceNotFoundException("Articolo non esistente");
-		else {
-			
-		}
-		
+			throw new ResourceNotFoundException("Articolo non trovato");
 		
 		return articolo;
 		

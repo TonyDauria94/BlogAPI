@@ -59,9 +59,21 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 		dto.setDataPublicazione(a.getDataPublicazione());
 		dto.setDataModifica(a.getDataModifica());
 		dto.setDataCreazione(a.getDataCreazione());
-		dto.setStato(a.getStato());
+
+		ArticoloDTO.Stato stato = null;
+		
+		switch (a.getStato()) {
+		case "pubblicato":
+			stato = ArticoloDTO.Stato.PUBBLICATO;
+			break;
+		case "bozza":
+			stato = ArticoloDTO.Stato.BOZZA;
+			break;
+		}
+		
+		dto.setStato(stato);
 		dto.setAutore(a.getAutore().getUsername());
-		dto.setCategoria(a.getCategoria().getCategoria());
+		dto.setCategoria(a.getCategoria());
 		
 		List<String> tags = new ArrayList<>();
 		

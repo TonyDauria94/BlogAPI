@@ -20,6 +20,9 @@ public class TagAPIController {
 	@Autowired
 	private BlogTagDetailsService tagService;
 
+	/* @return Tutti i tag presenti sul database. 
+	 * @throws ResourceNotFoundException se nel db non sono presenti tag.
+	 * */
 	@RequestMapping(path = "/api/tag", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public List<TagDTO> get() {
@@ -33,9 +36,13 @@ public class TagAPIController {
 	}
 
 	
+	/* Gestisce la ResourceNotFoundException lanciata dal controller.
+	 * nel caso in ciò cui accada, il controller invierà al client 
+	 * una response con HttpStatus 404.
+	 * */
 	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(code = HttpStatus.NOT_FOUND)
-	public String handleRuntimeException(ResourceNotFoundException ex) {
+	public String handleResourceNotFoundException(ResourceNotFoundException ex) {
 		return ex.getMessage();
 	}
 }

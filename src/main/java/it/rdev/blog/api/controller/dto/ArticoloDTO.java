@@ -4,6 +4,31 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class ArticoloDTO {
+	
+	/** Enumeratore per lo stato dell'articolo.
+	 *  Usando l'enumeratore posso evitare che nel db vengano aggiunti articoli
+	 *  in uno stato non gestito dal controller.
+	 * 
+	 *  PUBBLICATO : Articolo pubblicato, chiunque può leggerlo.
+	 *  BOZZA      : Articolo in bozza, solo l'autore può leggerlo, modificarlo o pubblicarlo.
+	 *  
+	 */
+	public enum Stato {
+
+		PUBBLICATO("pubblicato"),
+		BOZZA("bozza");
+		
+		private String valore;
+		
+		Stato(String valore) {
+			this.valore = valore;
+		}
+		
+		public String getValore() {
+			return valore;
+		}
+		
+	}
 
 	private long id;
 	private String titolo;
@@ -12,7 +37,7 @@ public class ArticoloDTO {
 	private LocalDateTime dataPublicazione;
 	private LocalDateTime dataModifica;
 	private LocalDateTime dataCreazione;
-	private String stato;
+	private Stato stato;
 	
 	private String autore;
 	private String categoria;
@@ -74,11 +99,12 @@ public class ArticoloDTO {
 		this.dataCreazione = dataCreazione;
 	}
 
+	/* Per lo stato restituisco il valore e non l'enum. */
 	public String getStato() {
-		return stato;
+		return stato.getValore();
 	}
 
-	public void setStato(String stato) {
+	public void setStato(Stato stato) {
 		this.stato = stato;
 	}
 

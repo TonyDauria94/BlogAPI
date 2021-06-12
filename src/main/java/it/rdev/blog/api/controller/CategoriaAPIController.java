@@ -20,6 +20,9 @@ public class CategoriaAPIController {
 	@Autowired
 	private BlogCategoriaDetailsService categoryService;
 	
+	/* @return Tutte le categorie presenti sul database.
+	 * @throws ResourceNotFoundException se nel db non sono presenti categorie.
+	 * */
 	@RequestMapping(path = "/api/categoria", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public List<CategoriaDTO> get() {
@@ -32,6 +35,10 @@ public class CategoriaAPIController {
 		return list;
 	}
 	
+	/* Gestisce la ResourceNotFoundException lanciata dal controller.
+	 * nel caso in cui ciò accada, il controller invierà al client 
+	 * una response con HttpStatus 404.
+	 * */
 	@ExceptionHandler(RuntimeException.class)
 	@ResponseStatus(code = HttpStatus.NOT_FOUND)
 	public String resourceNotFoundException(RuntimeException ex) {
