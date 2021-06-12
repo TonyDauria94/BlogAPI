@@ -124,14 +124,71 @@ public class ArticoloAPIController {
 			articolo.setStato(Stato.bozza);
 			
 			// effettuo la insert.
-			articoloService.post(articolo);
+			articoloService.saveOrUpdate(articolo);
+		} 
+		
+	}
+	
+	
+	//TODO Fare altri test al metodo PUT
+	/* Modifica un articolo. */
+	@RequestMapping(path = "/{idArticolo:\\d+}", method = RequestMethod.PUT)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void put (
+			@RequestHeader(required = true, value = "Authorization") String token,
+			@PathVariable Integer idArticolo,
+			@RequestBody final ArticoloDTO articolo) {
+		
+		if (token != null) {
+			// recupero l'id dell'utente
+			Long id = jwtUtil.getUserIdFromToken(token);
+			
+			// Recupero l'articolo dal db
+			ArticoloDTO articoloDb = articoloService.getById(idArticolo);
+			
+			// se l'articolo è null lancio l'eccezione
+			if (articoloDb == null) throw new ResourceNotFoundException("Articolo non trovato");
+			
+			// se l'articolo ha un autore differente dall'utente loggato
+			if (articoloDb.getAutoreId() != id)
+				throw new NotTheAuthorException("Gli articoli possono essere modificati"
+						+ " solamente dal proprio autore");
+		
+			if(articolo.getTitolo() != null)
+				articoloDb.setTitolo(articolo.getTitolo());
+			
+			if(articolo.getSottotitolo() != null)
+				articoloDb.setSottotitolo(articolo.getSottotitolo());
+			
+			if(articolo.getTesto() != null)
+				articoloDb.setTesto(articolo.getTesto());
+			
+			// aggiorno la data di modifica.
+			articoloDb.setDataModifica(LocalDateTime.now());
+		
+			// se l'articolo sul db è in bozza e l'articolo passato è pubblicato
+			if (Stato.bozza.getValore().equals(articoloDb.getStato())
+			 && Stato.pubblicato.getValore().equals(articolo.getStato()) ) {
+				// allora posso impostare la data di pubblicazione
+				articoloDb.setDataCreazione(LocalDateTime.now());
+				articoloDb.setStato(Stato.pubblicato);
+			}
+			
+			if(articolo.getCategoria() != null)
+			articoloDb.setCategoria(articolo.getCategoria());
+			
+			if(articolo.getTags() != null)
+			articoloDb.setTags(articolo.getTags());
+			
+			// effettuo la insert.
+			articoloService.saveOrUpdate(articoloDb);
 		} 
 		
 	}
 	
 	
 	
-	/* Inserisce un nuovo articolo */
+	/* Elimina un articolo */
 	@RequestMapping(path = "/{id:\\d+}", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete (
@@ -150,7 +207,7 @@ public class ArticoloAPIController {
 			// se l'autore dell'articolo non è l'utente loggato, lancio l'eccezione
 			if (articolo.getAutoreId() != userId) 
 				throw new NotTheAuthorException("Gli articoli possono essere eliminati"
-												+ " solo dai propri autori");
+												+ " solo dal proprio autore");
 			
 			// Effettuo l'eliminazione
 			articoloService.delete(articolo.getId(), userId);

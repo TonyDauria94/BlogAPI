@@ -30,6 +30,17 @@ public class ArticoloDTO {
 			return valore;
 		}
 		
+		public static Stato getEnumByString(String stato) {
+			switch (stato) {
+			case "pubblicato":
+				return Stato.pubblicato;
+			case "bozza":
+				return Stato.bozza;
+			default:
+				return null;
+			}
+		}
+		
 	}
 
 	private Long id;

@@ -6,8 +6,8 @@ import it.rdev.blog.api.controller.dto.ArticoloDTO;
 
 public interface BlogArticoloDetailsService {
 
-	/* Aggiunge un articolo al database */
-	public void post(ArticoloDTO articolo);
+	/* Aggiunge/modifica un articolo al database */
+	public void saveOrUpdate(ArticoloDTO articolo);
 	
 	/* Elimina un articolo dal database tramite l'id l'autore.
 	 *

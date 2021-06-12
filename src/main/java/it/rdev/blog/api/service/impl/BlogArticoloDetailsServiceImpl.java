@@ -22,7 +22,7 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 	private ArticoloDAO articoloDao;
 
 	@Override
-	public void post(ArticoloDTO articolo) {
+	public void saveOrUpdate(ArticoloDTO articolo) {
 		articoloDao.save(toEntity(articolo));
 	}
 	
@@ -113,6 +113,7 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 		
 		dto.setStato(stato);
 		dto.setAutore(a.getAutore().getUsername());
+		dto.setAutoreId(a.getAutore().getId());
 		dto.setCategoria(a.getCategoria());
 		
 		List<String> tags = new ArrayList<>();
