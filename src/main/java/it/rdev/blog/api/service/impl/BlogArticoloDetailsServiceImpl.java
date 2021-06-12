@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
 import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
-import it.rdev.blog.api.dao.ArticoloDao;
+import it.rdev.blog.api.dao.ArticoloDAO;
 import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Tag;
 import it.rdev.blog.api.dao.entity.User;
@@ -19,15 +19,22 @@ import it.rdev.blog.api.service.BlogArticoloDetailsService;
 public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsService {
 
 	@Autowired
-	private ArticoloDao articoloDao;
-	
-	
+	private ArticoloDAO articoloDao;
+
 	@Override
 	public void post(ArticoloDTO articolo) {
 		articoloDao.save(toEntity(articolo));
 	}
 	
-	/* Restituisce tuttti gli articoli */
+	@Override
+	public boolean delete(long id, long idAutore) {
+		User u = new User();
+		u.setId(idAutore);
+		return articoloDao.deleteByIdAndAutore(id, u) > 0;
+		
+	}
+	
+	/* Restituisce tutti gli articoli */
 	@Override
 	public List<ArticoloDTO> getAll() {
 		

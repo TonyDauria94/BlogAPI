@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import it.rdev.blog.api.dao.entity.User;
 
 @Repository
-public interface UserDao extends CrudRepository<User, Integer> {
+public interface UserDAO extends CrudRepository<User, Integer> {
 	
 	User findByUsername(String username);
 	

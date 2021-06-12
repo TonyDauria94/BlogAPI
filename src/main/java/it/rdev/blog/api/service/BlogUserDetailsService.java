@@ -10,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import it.rdev.blog.api.controller.dto.UserDTO;
-import it.rdev.blog.api.dao.UserDao;
+import it.rdev.blog.api.dao.UserDAO;
 import it.rdev.blog.api.dao.entity.User;
 import it.rdev.blog.api.service.bean.BlogUserDetails;
 
@@ -18,7 +18,7 @@ import it.rdev.blog.api.service.bean.BlogUserDetails;
 public class BlogUserDetailsService implements UserDetailsService {
 	
 	@Autowired
-	private UserDao userDao;
+	private UserDAO userDao;
 
 	@Autowired
 	private PasswordEncoder bcryptEncoder;

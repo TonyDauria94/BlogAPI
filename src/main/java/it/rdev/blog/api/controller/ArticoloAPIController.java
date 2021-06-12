@@ -8,7 +8,6 @@ import java.util.List;
 import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.rdev.blog.api.config.JwtTokenUtil;
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
 import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
+import it.rdev.blog.api.exception.NotTheAuthorException;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
 import it.rdev.blog.api.service.BlogArticoloDetailsService;
 
@@ -102,7 +102,7 @@ public class ArticoloAPIController {
 	}
 	
 	/* Inserisce un nuovo articolo */
-	@RequestMapping(path = "", method = RequestMethod.POST,  consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(path = "", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void post (
 			@RequestHeader(required = true, value = "Authorization") String token,
@@ -129,10 +129,47 @@ public class ArticoloAPIController {
 		
 	}
 	
+	
+	
+	/* Inserisce un nuovo articolo */
+	@RequestMapping(path = "/{id:\\d+}", method = RequestMethod.DELETE)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void delete (
+			@RequestHeader(required = true, value = "Authorization") String token,
+			@PathVariable Integer id) {
+		
+		if (token != null) {
+			Long userId = jwtUtil.getUserIdFromToken(token);
+			
+			// Recupero l'articolo
+			ArticoloDTO articolo = articoloService.getById(id);
+			
+			// se l'articolo è null lancio l'eccezione
+			if (articolo == null) throw new ResourceNotFoundException("Articolo non trovato");
+			
+			// se l'autore dell'articolo non è l'utente loggato, lancio l'eccezione
+			if (articolo.getAutoreId() != userId) 
+				throw new NotTheAuthorException("Gli articoli possono essere eliminati"
+												+ " solo dai propri autori");
+			
+			// Effettuo l'eliminazione
+			articoloService.delete(articolo.getId(), userId);
+		} 
+		
+		
+	}
+	
 	// Gestisce eccezioni lanciate quando vengono inseriti dati errati.
 	@ExceptionHandler({SQLIntegrityConstraintViolationException.class, PropertyValueException.class})
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
 	public String handleSQLIntegrityConstraintViolationException(Exception ex) {
+		return ex.getMessage();
+	}
+	
+	// Gestisce eccezioni lanciate quando vengono inseriti dati errati.
+	@ExceptionHandler()
+	@ResponseStatus(code = HttpStatus.FORBIDDEN)
+	public String handleNotTheAuthorException(NotTheAuthorException ex) {
 		return ex.getMessage();
 	}
 	

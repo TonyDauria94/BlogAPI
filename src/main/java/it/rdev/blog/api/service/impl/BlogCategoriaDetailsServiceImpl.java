@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.rdev.blog.api.controller.dto.CategoriaDTO;
-import it.rdev.blog.api.dao.CategoriaDao;
+import it.rdev.blog.api.dao.CategoriaDAO;
 import it.rdev.blog.api.dao.entity.Categoria;
 import it.rdev.blog.api.service.BlogCategoriaDetailsService;
 
@@ -15,7 +15,7 @@ import it.rdev.blog.api.service.BlogCategoriaDetailsService;
 public class BlogCategoriaDetailsServiceImpl implements BlogCategoriaDetailsService {
 
 	@Autowired
-	private CategoriaDao categoriaDao;
+	private CategoriaDAO categoriaDao;
 	
 	@Override
 	public List<CategoriaDTO> getAll() {

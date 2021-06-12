@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import it.rdev.blog.api.dao.entity.Tag;
 
-public interface TagDao extends CrudRepository<Tag, String> {
+public interface TagDAO extends CrudRepository<Tag, String> {
 
 }
