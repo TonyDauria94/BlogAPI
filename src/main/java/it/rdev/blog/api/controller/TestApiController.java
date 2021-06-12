@@ -13,7 +13,7 @@ public class TestApiController {
 	
 	@Autowired
 	private JwtTokenUtil jwtUtil;
-	
+
 	@GetMapping({ "/api/test" })
 	public String get() {
 	
@@ -23,11 +23,14 @@ public class TestApiController {
 	@PostMapping({ "/api/test" })
 	public String post(@RequestHeader(name = "Authorization") String token) {
 		String username = null;
+		Long id = null;
 		if(token != null && token.startsWith("Bearer")) {
 			token = token.replaceAll("Bearer ", "");
 			username = jwtUtil.getUsernameFromToken(token);
+			id = jwtUtil.getUserIdFromToken(token);
+			
 		}
-		return "Risorsa Protetta [" + username + "]";
+		return "Risorsa Protetta ["+ id + "] [" + username + "]";
 	}
 	
 }
