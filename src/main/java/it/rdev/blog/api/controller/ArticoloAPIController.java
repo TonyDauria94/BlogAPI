@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import it.rdev.blog.api.config.JwtTokenUtil;
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
 import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
+import it.rdev.blog.api.controller.dto.ExceptionDTO;
 import it.rdev.blog.api.exception.NotTheAuthorException;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
 import it.rdev.blog.api.service.BlogArticoloDetailsService;
@@ -44,10 +46,6 @@ public class ArticoloAPIController {
 			@RequestHeader(required = false, value = "Authorization") String token) {
 		
 		List<ArticoloDTO> list= new ArrayList<>();
-		
-		// TODO dal momento che questa path non viene filtrata dall'autenticazione,
-		// l'utente potrebbe avere un token scaduto, bisognerebbe aggiungere un
-		// controllo sulla scadenza.
 		
 		// se l'utente ha un token
 		if (token != null) {
@@ -84,18 +82,24 @@ public class ArticoloAPIController {
 		if(articolo == null) 
 			throw new ResourceNotFoundException("Articolo non trovato");
 		
-		// se l'utente ha un token e l'articolo è una bozza
-		if (token != null && Stato.bozza.getValore().equals(articolo.getStato())) {
-			// recupero lo username dell'utente
-			String username = jwtUtil.getUsernameFromToken(token);
+		// Se l'articolo è una bozza
+		if (Stato.bozza.getValore().equals(articolo.getStato())) {
 			
-			// se lo username non coincide con quello dell'articolo
-			// lancia una eccezione.
-			if(!username.equals(articolo.getAutore())) {
+			// se l'utente ha un token
+			if (token != null) {
+				// recupero lo username dell'utente
+				String username = jwtUtil.getUsernameFromToken(token);
+				
+				// se lo username non coincide con quello dell'articolo
+				// lancia una eccezione.
+				if(!username.equals(articolo.getAutore())) {
+					throw new ResourceNotFoundException("Articolo non trovato");
+				}
+			} else { // l'utente non ha un token
 				throw new ResourceNotFoundException("Articolo non trovato");
 			}
 			
-		} 
+		}
 		
 		return articolo;
 		
@@ -113,10 +117,15 @@ public class ArticoloAPIController {
 			Long id = jwtUtil.getUserIdFromToken(token);
 			String username = jwtUtil.getUsernameFromToken(token);
 			
-			// imposto l'autore dell'articolo
+			// imposto l'autore dell'articolo.
+			// Questo sovrascrive anche eventuali nomi di autori inseriti
+			// in input dall'utente, rendendo inpossibile l'aggiunta di un articolo
+			// con un nome utente diverso da quello dell'utente loggato.
 			articolo.setAutoreId(id);
 			articolo.setAutore(username);
+			
 			// imposto data creazione, data modifica.
+			// Trattandosi di un nuovo articolo, le imposto alla data attuale.
 			articolo.setDataCreazione(LocalDateTime.now());
 			articolo.setDataModifica(LocalDateTime.now());
 			
@@ -216,24 +225,39 @@ public class ArticoloAPIController {
 		
 	}
 	
-	// Gestisce eccezioni lanciate quando vengono inseriti dati errati.
+	/* Gestisce eccezioni lanciate quando vengono inseriti dati errati.*/
 	@ExceptionHandler({SQLIntegrityConstraintViolationException.class, PropertyValueException.class})
 	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
-	public String handleSQLIntegrityConstraintViolationException(Exception ex) {
-		return ex.getMessage();
+	public ExceptionDTO handleSQLIntegrityConstraintViolationException(Exception ex) {
+		return new ExceptionDTO()
+				.setEccezione(ex.getClass().getName())
+				.setMessaggio(ex.getMessage());
 	}
 	
-	// Gestisce eccezioni lanciate quando vengono inseriti dati errati.
+	/* Gestisce eccezioni lanciata quando si tenta di modificare un articolo di un altro autore.*/
 	@ExceptionHandler()
 	@ResponseStatus(code = HttpStatus.FORBIDDEN)
-	public String handleNotTheAuthorException(NotTheAuthorException ex) {
-		return ex.getMessage();
+	public ExceptionDTO handleNotTheAuthorException(NotTheAuthorException ex) {
+		return new ExceptionDTO()
+				.setEccezione(ex.getClass().getName())
+				.setMessaggio(ex.getMessage());
 	}
 	
 	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(code = HttpStatus.NOT_FOUND)
-	public String handleRuntimeException(ResourceNotFoundException ex) {
-		return ex.getMessage();
+	public ExceptionDTO handleRuntimeException(ResourceNotFoundException ex) {
+		return new ExceptionDTO()
+				.setEccezione(ex.getClass().getName())
+				.setMessaggio(ex.getMessage());
+	}
+	
+	/* Gestisce eccezione lanciata quando viene utilizzato un token scaduto. */
+	@ExceptionHandler(ExpiredJwtException.class)
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	public ExceptionDTO handleExpiredJwtExceptionException(ExpiredJwtException ex) {
+		return new ExceptionDTO()
+				.setEccezione(ex.getClass().getName())
+				.setMessaggio("Token scaduto!");
 	}
 	
 }
