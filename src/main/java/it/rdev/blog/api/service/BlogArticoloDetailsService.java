@@ -1,6 +1,7 @@
 package it.rdev.blog.api.service;
 
 import java.util.List;
+import java.util.Map;
 
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
 
@@ -30,4 +31,6 @@ public interface BlogArticoloDetailsService {
 	 * @return  			Tutti gli articoli pubblici più quelli in bozza di un utente specifico*/
 	public List<ArticoloDTO> getPubbliciAndBozze(long id_utente);
 	
+	/* Effettua una ricerca utilizzando i filti passati tramite la mappa */
+	public List<ArticoloDTO> getByFilters(Map<String, String> filters);
 }

@@ -2,6 +2,7 @@ package it.rdev.blog.api.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
 import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
 import it.rdev.blog.api.dao.ArticoloDAO;
+import it.rdev.blog.api.dao.ArticoloDAOEM;
 import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Tag;
 import it.rdev.blog.api.dao.entity.User;
@@ -20,6 +22,9 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 
 	@Autowired
 	private ArticoloDAO articoloDao;
+	
+	@Autowired
+	private ArticoloDAOEM articoloDaoEm;
 
 	@Override
 	public void saveOrUpdate(ArticoloDTO articolo) {
@@ -79,6 +84,17 @@ public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsServic
 	@Override
 	public List<ArticoloDTO> getPubbliciAndBozze(long id_utente) {
 		Iterable<Articolo> it = articoloDao.findAll(new User().setId(id_utente));
+		List<ArticoloDTO> list = new ArrayList<>();
+		for (Articolo a : it) {
+			list.add(toDto(a));
+		}
+		
+		return list;
+	}
+	
+	@Override
+	public List<ArticoloDTO> getByFilters(Map<String, String> filters) {
+		Iterable<Articolo> it = articoloDaoEm.find(filters);
 		List<ArticoloDTO> list = new ArrayList<>();
 		for (Articolo a : it) {
 			list.add(toDto(a));

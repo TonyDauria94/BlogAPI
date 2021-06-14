@@ -4,6 +4,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.PropertyValueException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,11 +41,28 @@ public class ArticoloAPIController {
 	@Autowired
 	private BlogArticoloDetailsService articoloService;
 	
+	/* path provvisoria per testare il funzionamento di filtri.
+	 * creata per non mischare la logica del metodo get con quella dei filtri.
+	 * 
+	 * Per ora la ricerca avviene su tutti gli articoli, anche su quelli 
+	 * che non dovrebbero essere accessibili.
+	 * 
+	 * TODO Una volta fatti i dovuti test eliminare questo metodo.
+	 *  */
+	@RequestMapping(path = "/filter", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	public List<ArticoloDTO> getTest(
+			@RequestParam(required = false) Map<String, String> params) {
+		
+		return articoloService.getByFilters(params);
+	}
+	
 	
 	@RequestMapping(path = "", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public List<ArticoloDTO> get(
-			@RequestHeader(required = false, value = "Authorization") String token) {
+			@RequestHeader(required = false, value = "Authorization") String token,
+			@RequestParam(required = false) Map<String, String> params) {
 		
 		List<ArticoloDTO> list= new ArrayList<>();
 		

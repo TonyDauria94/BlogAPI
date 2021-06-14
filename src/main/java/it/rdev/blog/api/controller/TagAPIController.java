@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -39,14 +38,4 @@ public class TagAPIController {
 		return list;
 	}
 
-	
-	/* Gestisce la ResourceNotFoundException lanciata dal controller.
-	 * nel caso in ciò cui accada, il controller invierà al client 
-	 * una response con HttpStatus 404.
-	 * */
-	@ExceptionHandler(ResourceNotFoundException.class)
-	@ResponseStatus(code = HttpStatus.NOT_FOUND)
-	public String handleResourceNotFoundException(ResourceNotFoundException ex) {
-		return ex.getMessage();
-	}
 }
