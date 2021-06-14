@@ -1,7 +1,6 @@
 package it.rdev.blog.api.dao;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -19,8 +17,6 @@ import org.springframework.stereotype.Component;
 
 import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Articolo_;
-import it.rdev.blog.api.dao.entity.Tag;
-import it.rdev.blog.api.dao.entity.Tag_;
 import it.rdev.blog.api.dao.entity.User;
 import it.rdev.blog.api.dao.entity.User_;
 
@@ -32,7 +28,22 @@ public class ArticoloDAOEM {
 	@PersistenceContext
 	private EntityManager entityManager;
 	
-	/* Esegue una query generata a seconda dei parametri passati in input tramite la mappa. */
+	/* Esegue una query generata a seconda dei parametri passati in input tramite la mappa. 
+	 * 
+	 * parametri della mappa:
+	 * 
+	 * testo: 		Ricerca articoli con un certo testo contenuto nel 
+	 * 				titolo, nel sottotitolo o nel corpo.
+	 *
+	 * autore:		Ricerca articoli di un determinato autore.
+	 * 
+	 * categoria: 	Ricarca articoli di una determinata categoria.
+	 * 
+	 * tag:			Ricerca articoli che contengono un certo tag.
+	 *
+	 * stato:		Ricerca articoli con un determinato stato.
+	 * 
+	 * */
 	public List<Articolo> find(Map<String, String> params) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Articolo> c = cb.createQuery(Articolo.class);
@@ -86,19 +97,15 @@ public class ArticoloDAOEM {
 		// TODO PER ORA NON FUNZIONA.
 		if (params.get("tag") != null) {
 			
-			Collection<Tag> list = new ArrayList<>();
-			
-			Tag t = new Tag();
-			
-			t.setTag(params.get("tag"));
 
-			list.add(t);
-			list.add(t);
+			// Effettuo la Join con la tabella tag
+			// Join<Articolo, Tag> tag = art.join(Articolo_.tags, JoinType.LEFT);
 			
-			//Predicate pTag = cb.equal(art.get(Tag_.tag), "tecnologia");
+			// Devo aggiungere alla query la ricerca per categoria
+			// Predicate pAutore = cb.equal(tag.get(Tag_.tag), params.get("tag"));
 			
 			// Aggiungo il predicato
-			//predicates.add(pTag);
+			// predicates.add(pAutore);
 		
 		}
 		
