@@ -1,6 +1,7 @@
 package it.rdev.blog.api.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -16,7 +19,13 @@ import org.springframework.stereotype.Component;
 
 import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Articolo_;
+import it.rdev.blog.api.dao.entity.Tag;
+import it.rdev.blog.api.dao.entity.Tag_;
+import it.rdev.blog.api.dao.entity.User;
+import it.rdev.blog.api.dao.entity.User_;
 
+/* Implementazioni di un dao per gli articoli che utilizza l'EntityManager
+ * effettuare query sul db. */
 @Component
 public class ArticoloDAOEM {
 
@@ -46,7 +55,6 @@ public class ArticoloDAOEM {
 		
 		}
 		
-		
 		// Se ho il parametro categoria
 		if (params.get("categoria") != null) {
 			
@@ -55,6 +63,42 @@ public class ArticoloDAOEM {
 			
 			// Aggiungo il predicato
 			predicates.add(pCategoria);
+		
+		}
+		
+		
+		// Se ho il parametro autore
+		if (params.get("autore") != null) {
+			
+			// Effettuo la Join con la tabella user in modo da poter
+			// Fare la ricerca tramite username
+			Join<Articolo, User> user = art.join(Articolo_.autore);
+			
+			// Devo aggiungere alla query la ricerca per categoria
+			Predicate pAutore = cb.equal(user.get(User_.username), params.get("autore"));
+			
+			// Aggiungo il predicato
+			predicates.add(pAutore);
+		
+		}
+		
+		// Se ho il parametro tag
+		// TODO PER ORA NON FUNZIONA.
+		if (params.get("tag") != null) {
+			
+			Collection<Tag> list = new ArrayList<>();
+			
+			Tag t = new Tag();
+			
+			t.setTag(params.get("tag"));
+
+			list.add(t);
+			list.add(t);
+			
+			//Predicate pTag = cb.equal(art.get(Tag_.tag), "tecnologia");
+			
+			// Aggiungo il predicato
+			//predicates.add(pTag);
 		
 		}
 		

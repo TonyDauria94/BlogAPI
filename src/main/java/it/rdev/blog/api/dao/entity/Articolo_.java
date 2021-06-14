@@ -1,6 +1,7 @@
 package it.rdev.blog.api.dao.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.metamodel.ListAttribute;
 import javax.persistence.metamodel.SingularAttribute;
@@ -20,6 +21,6 @@ public class Articolo_ {
 	  public static volatile SingularAttribute<Articolo, String> stato;
 	  public static volatile SingularAttribute<Articolo, User> autore;
 	  public static volatile SingularAttribute<Articolo, String> categoria;
-	  public static volatile ListAttribute<Articolo, Tag> tags;
+	  public static volatile ListAttribute<Articolo, List<Tag>> tags;
 	
 }
