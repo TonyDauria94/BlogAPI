@@ -40,7 +40,30 @@ public class ArticoloAPIController {
 	@Autowired
 	private ArticoloDetailsService articoloService;
 
-		
+	/* In ascolto sull' endpoint /api/articolo, restituisce al chiamante una lista di articoli
+	 * in formato JSON paginata.
+	 * 
+	 * I parametri ammessi nella query String sono:
+	 * 
+	 * testo: 			Ricerca articoli con un certo testo contenuto nel 
+	 * 					titolo, nel sottotitolo o nel corpo. La lunghezza 
+	 * 					minima del testo deve essere di almeno 3 caratteri.
+	 *
+	 * autore:			Ricerca articoli pubblicati da un autore con un 
+	 * 					determinato nickname.
+	 * 
+	 * categoria: 		Ricarca articoli di una determinata categoria.
+	 * 
+	 * tag:				Ricerca articoli che contengono un certo tag.
+	 *
+	 * stato:			Ricerca articoli con un determinato stato.
+	 * 					E' utilizzabile solamente dagli utenti loggati.
+	 * 
+	 * page:			Numero di pagina.
+	 * 
+	 * count: 			Numero elementi per pagina.
+	 *
+	 * */
 	@RequestMapping(path = "", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public List<ArticoloDTO> get(
