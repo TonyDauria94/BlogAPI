@@ -11,7 +11,7 @@ public class User_ {
 	public static volatile SingularAttribute<User, Long> id;
 	  public static volatile SingularAttribute<User, String> username;
 	  public static volatile SingularAttribute<User, String> password;
-	  public static volatile ListAttribute<User, String> articoli;
+	  public static volatile ListAttribute<User, Articolo> articoli;
 	  
 	
 }

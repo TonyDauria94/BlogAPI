@@ -10,6 +10,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.ListJoin;
+import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Component;
 
 import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Articolo_;
+import it.rdev.blog.api.dao.entity.Tag;
+import it.rdev.blog.api.dao.entity.Tag_;
 import it.rdev.blog.api.dao.entity.User;
 import it.rdev.blog.api.dao.entity.User_;
 
@@ -94,18 +98,17 @@ public class ArticoloDAOEM {
 		}
 		
 		// Se ho il parametro tag
-		// TODO PER ORA NON FUNZIONA.
 		if (params.get("tag") != null) {
 			
 
 			// Effettuo la Join con la tabella tag
-			// Join<Articolo, Tag> tag = art.join(Articolo_.tags, JoinType.LEFT);
+			Join<Articolo, Tag> tag = art.join(Articolo_.tags);
 			
 			// Devo aggiungere alla query la ricerca per categoria
-			// Predicate pAutore = cb.equal(tag.get(Tag_.tag), params.get("tag"));
+			Predicate pAutore = cb.equal(tag.get(Tag_.tag), params.get("tag"));
 			
 			// Aggiungo il predicato
-			// predicates.add(pAutore);
+			predicates.add(pAutore);
 		
 		}
 		
