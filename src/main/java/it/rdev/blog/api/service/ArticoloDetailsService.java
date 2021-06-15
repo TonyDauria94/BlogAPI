@@ -5,7 +5,7 @@ import java.util.Map;
 
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
 
-public interface BlogArticoloDetailsService {
+public interface ArticoloDetailsService {
 
 	/* Aggiunge/modifica un articolo al database */
 	public void saveOrUpdate(ArticoloDTO articolo);

@@ -112,6 +112,17 @@ public class ArticoloDAOEM {
 		
 		}
 		
+		// Se ho il parametro stato
+		if (params.get("stato") != null) {
+			
+			// Devo aggiungere alla query la ricerca per categoria
+			Predicate pStato = cb.equal(art.get(Articolo_.stato), params.get("stato"));
+			
+			// Aggiungo il predicato
+			predicates.add(pStato);
+		
+		}
+		
 		// Aggiungo i predicates alla query
 		Predicate finalPredicate = cb.and(predicates.toArray(new Predicate[0]));
 		c.where(finalPredicate);

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import it.rdev.blog.api.config.JwtTokenUtil;
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
 
-import it.rdev.blog.api.service.BlogArticoloDetailsService;
+import it.rdev.blog.api.service.ArticoloDetailsService;
 
 @RestController
 public class TestApiController {
@@ -22,7 +22,7 @@ public class TestApiController {
 	private JwtTokenUtil jwtUtil;
 	
 	@Autowired
-	private BlogArticoloDetailsService as;
+	private ArticoloDetailsService as;
 	
 	@GetMapping({ "/api/test" })
 	public String get() {

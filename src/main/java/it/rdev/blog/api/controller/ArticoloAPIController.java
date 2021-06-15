@@ -26,7 +26,7 @@ import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
 import it.rdev.blog.api.controller.dto.ExceptionDTO;
 import it.rdev.blog.api.exception.NotTheAuthorException;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
-import it.rdev.blog.api.service.BlogArticoloDetailsService;
+import it.rdev.blog.api.service.ArticoloDetailsService;
 
 /* Classe controller che permette l'accesso e la modifica degli articoli.
  * Il servizio è accessibile dall'endpoint /api/articolo.
@@ -39,7 +39,7 @@ public class ArticoloAPIController {
 	private JwtTokenUtil jwtUtil;
 	
 	@Autowired
-	private BlogArticoloDetailsService articoloService;
+	private ArticoloDetailsService articoloService;
 	
 	/* path provvisoria per testare il funzionamento di filtri.
 	 * creata per non mischare la logica del metodo get con quella dei filtri.

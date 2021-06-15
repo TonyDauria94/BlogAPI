@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import it.rdev.blog.api.controller.dto.TagDTO;
 import it.rdev.blog.api.dao.TagDAO;
 import it.rdev.blog.api.dao.entity.Tag;
-import it.rdev.blog.api.service.BlogTagDetailsService;
+import it.rdev.blog.api.service.TagDetailsService;
 
 
 @Service
-public class BlogTagDetailsServiceImpl implements BlogTagDetailsService {
+public class TagDetailsServiceImpl implements TagDetailsService {
 	
 	@Autowired
 	private TagDAO tagDao;

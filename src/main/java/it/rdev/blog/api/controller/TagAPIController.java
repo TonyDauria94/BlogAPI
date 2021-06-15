@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.rdev.blog.api.controller.dto.TagDTO;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
-import it.rdev.blog.api.service.BlogTagDetailsService;
+import it.rdev.blog.api.service.TagDetailsService;
 
 /* Controller per la gestione dei tag.
  * Il servizio è accessibile dall'endpoint /api/tag.
@@ -21,7 +21,7 @@ import it.rdev.blog.api.service.BlogTagDetailsService;
 public class TagAPIController {
 
 	@Autowired
-	private BlogTagDetailsService tagService;
+	private TagDetailsService tagService;
 
 	/* @return Tutti i tag presenti sul database. 
 	 * @throws ResourceNotFoundException se nel db non sono presenti tag.

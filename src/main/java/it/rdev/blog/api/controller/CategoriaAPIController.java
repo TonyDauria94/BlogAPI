@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import it.rdev.blog.api.controller.dto.CategoriaDTO;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
-import it.rdev.blog.api.service.BlogCategoriaDetailsService;
+import it.rdev.blog.api.service.CategoriaDetailsService;
 
 /* Controller per la gestione delle categorie.
  * Il servizio è accessibile dall'endpoint /api/categoria.
@@ -22,7 +22,7 @@ import it.rdev.blog.api.service.BlogCategoriaDetailsService;
 public class CategoriaAPIController {
 	
 	@Autowired
-	private BlogCategoriaDetailsService categoryService;
+	private CategoriaDetailsService categoryService;
 	
 	/* @return Tutte le categorie presenti sul database.
 	 * @throws ResourceNotFoundException se nel db non sono presenti categorie.

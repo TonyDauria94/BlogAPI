@@ -15,10 +15,10 @@ import it.rdev.blog.api.dao.ArticoloDAOEM;
 import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Tag;
 import it.rdev.blog.api.dao.entity.User;
-import it.rdev.blog.api.service.BlogArticoloDetailsService;
+import it.rdev.blog.api.service.ArticoloDetailsService;
 
 @Service
-public class BlogArticoloDetailsServiceImpl implements BlogArticoloDetailsService {
+public class ArticoloDetailsServiceImpl implements ArticoloDetailsService {
 
 	@Autowired
 	private ArticoloDAO articoloDao;
