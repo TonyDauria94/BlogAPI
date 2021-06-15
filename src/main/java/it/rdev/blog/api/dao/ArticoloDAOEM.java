@@ -46,6 +46,10 @@ public class ArticoloDAOEM {
 	 *
 	 * stato:			Ricerca articoli con un determinato stato.
 	 * 
+	 * page:			Numero di pagina.
+	 * 
+	 * count: 			Numero elementi per pagina.
+	 * 
 	 * @param userId	Identificativo dell'utente loggato al sistema utilizzato per 
 	 * 					gestire la restituzione di articoli in stato bozza. 
 	 * 					Nel caso in cui l'accesso al db avvenga da parte di un 
@@ -166,7 +170,27 @@ public class ArticoloDAOEM {
 		Predicate finalPredicate = cb.and(predicates.toArray(new Predicate[0]));
 		c.where(finalPredicate);
 		
+		
+		// ################# PAGING #################
+		
+		int pageSize;
+		int pageNum;
+		
+		try {
+			pageSize = Integer.parseInt(params.get("count"));
+		} catch (NumberFormatException e) {
+			pageSize = 10;
+		}
+		
+		try {
+			pageNum = Integer.parseInt(params.get("page"));
+		} catch (NumberFormatException e) {
+			pageNum = 1;
+		}
+		
 		TypedQuery<Articolo> q = entityManager.createQuery(c);
+		q.setFirstResult((pageNum - 1) * pageSize );
+	    q.setMaxResults(pageSize);
 		return q.getResultList();
 		
 	}

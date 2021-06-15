@@ -2,7 +2,6 @@ package it.rdev.blog.api.controller;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -50,19 +49,23 @@ public class ArticoloAPIController {
 		
 		List<ArticoloDTO> list;
 		
+		// Se il parametro testo ha meno di 3 caratteri, allora lancio una eccezione
+		if (params.get("testo") != null && params.get("testo").length() < 3)
+			throw new IllegalArgumentException("Inserisci almeno tre caratteri per fare la ricerca sul testo.");
+		
 		// se l'utente ha un token
 		if (token != null) {
 			// recupero l'id dell'utente
 			Long userId = jwtUtil.getUserIdFromToken(token);
 					
+			// Effettuo la query utilizzando i filtri passati nella queryStrig
+			// passo al metodo anche l'id dell'utente loggato, in modo che
+			// possa restituirgli anche eventuali suoi articoli personali in stato bozza
 			list = articoloService.getByFilters(params, userId);
 			
 		} else { // utente anonimo
 			
-			// Restituisco solo gli articoli che hanno lo stato pubblicato.
-			// Eventuali filtri sullo stato verranno sovrascritti.
-			params.put("stato", Stato.pubblicato.getValore());
-			
+			// Effettuo la query in modalità utente anonimo.
 			list = articoloService.getByFilters(params);
 			
 		}
@@ -252,6 +255,15 @@ public class ArticoloAPIController {
 	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(code = HttpStatus.NOT_FOUND)
 	public ExceptionDTO handleRuntimeException(ResourceNotFoundException ex) {
+		return new ExceptionDTO()
+				.setEccezione(ex.getClass().getName())
+				.setMessaggio(ex.getMessage());
+	}
+	
+	
+	@ExceptionHandler(IllegalArgumentException.class)
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	public ExceptionDTO handleIllegalArgumentException(IllegalArgumentException ex) {
 		return new ExceptionDTO()
 				.setEccezione(ex.getClass().getName())
 				.setMessaggio(ex.getMessage());
