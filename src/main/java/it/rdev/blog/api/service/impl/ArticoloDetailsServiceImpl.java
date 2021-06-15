@@ -93,14 +93,21 @@ public class ArticoloDetailsServiceImpl implements ArticoloDetailsService {
 	}
 	
 	@Override
-	public List<ArticoloDTO> getByFilters(Map<String, String> filters) {
-		Iterable<Articolo> it = articoloDaoEm.find(filters);
+	public List<ArticoloDTO> getByFilters(Map<String, String> filters, Long userId) {
+		Iterable<Articolo> it = articoloDaoEm.find(filters, userId);
 		List<ArticoloDTO> list = new ArrayList<>();
 		for (Articolo a : it) {
 			list.add(toDto(a));
 		}
 		
 		return list;
+	}
+	
+	@Override
+	public List<ArticoloDTO> getByFilters(Map<String, String> filters) {
+		// Richiamo il getByFilters settando a null l'id dell'utente
+		// In modo che vengano mostrati solamente gli articoli pubblicati
+		return getByFilters(filters, null);
 	}
 	
 	/*

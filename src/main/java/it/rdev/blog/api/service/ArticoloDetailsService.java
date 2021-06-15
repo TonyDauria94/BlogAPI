@@ -31,6 +31,18 @@ public interface ArticoloDetailsService {
 	 * @return  			Tutti gli articoli pubblici più quelli in bozza di un utente specifico*/
 	public List<ArticoloDTO> getPubbliciAndBozze(long id_utente);
 	
-	/* Effettua una ricerca utilizzando i filti passati tramite la mappa */
+	
+	/* Effettua una ricerca per gli utenti loggati utilizzando i filtri passati tramite la mappa 
+	 * 
+	 * @param filters 	mappa di filtri
+	 * @param iserId	Identificativo dell'utente che si è loggato
+	 * */
+	public List<ArticoloDTO> getByFilters(Map<String, String> filters, Long userId);
+	
+	
+	/* Effettua una ricerca pr gli utenti anonimi utilizzando i filtri passati tramite la mappa 
+	 * 
+	 * @param filters 	mappa di filtri
+	 * */
 	public List<ArticoloDTO> getByFilters(Map<String, String> filters);
 }

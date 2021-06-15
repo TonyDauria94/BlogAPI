@@ -10,13 +10,12 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
-import javax.persistence.criteria.ListJoin;
-import javax.persistence.criteria.MapJoin;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Component;
 
+import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
 import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Articolo_;
 import it.rdev.blog.api.dao.entity.Tag;
@@ -34,21 +33,28 @@ public class ArticoloDAOEM {
 	
 	/* Esegue una query generata a seconda dei parametri passati in input tramite la mappa. 
 	 * 
-	 * parametri della mappa:
+	 * @param params 	mappa per l'applicazione dei filtri, può contenere le seguenti chiavi:
 	 * 
-	 * testo: 		Ricerca articoli con un certo testo contenuto nel 
-	 * 				titolo, nel sottotitolo o nel corpo.
+	 * testo: 			Ricerca articoli con un certo testo contenuto nel 
+	 * 					titolo, nel sottotitolo o nel corpo.
 	 *
-	 * autore:		Ricerca articoli di un determinato autore.
+	 * autore:			Ricerca articoli di un determinato autore.
 	 * 
-	 * categoria: 	Ricarca articoli di una determinata categoria.
+	 * categoria: 		Ricarca articoli di una determinata categoria.
 	 * 
-	 * tag:			Ricerca articoli che contengono un certo tag.
+	 * tag:				Ricerca articoli che contengono un certo tag.
 	 *
-	 * stato:		Ricerca articoli con un determinato stato.
+	 * stato:			Ricerca articoli con un determinato stato.
+	 * 
+	 * @param userId	Identificativo dell'utente loggato al sistema utilizzato per 
+	 * 					gestire la restituzione di articoli in stato bozza. 
+	 * 					Nel caso in cui l'accesso al db avvenga da parte di un 
+	 * 					utente anonimo, è possibile impostarlo a null.
+	 * 
+	 * @return			la lista di articoli recupaerata dal database.
 	 * 
 	 * */
-	public List<Articolo> find(Map<String, String> params) {
+	public List<Articolo> find(Map<String, String> params, Long userId) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Articolo> c = cb.createQuery(Articolo.class);
 		Root<Articolo> art = c.from(Articolo.class);
@@ -112,16 +118,49 @@ public class ArticoloDAOEM {
 		
 		}
 		
-		// Se ho il parametro stato
-		if (params.get("stato") != null) {
-			
-			// Devo aggiungere alla query la ricerca per categoria
-			Predicate pStato = cb.equal(art.get(Articolo_.stato), params.get("stato"));
-			
-			// Aggiungo il predicato
-			predicates.add(pStato);
+		// ################# GESTIONE STATO ARTICOLI ####################
+		// TODO FARE DEI TEST SU RICHIESTE CHE RIGUARDANO LO STATO
+
+		// inizializzo il predicate riguardante lo stato dell'articolo
+		// che può essere bozza o pubblicato
+		Predicate finalPredicateStato = null;
 		
+		// se l'utente loggato è anonimo oppure lo stato è pubblicato, allora mostro solo articoli pubblici.
+		if (userId == null || 
+				Stato.pubblicato.getValore().equals(params.get("stato"))) {
+			Predicate pStato = cb.equal(art.get(Articolo_.stato), Stato.pubblicato.getValore());
+			finalPredicateStato = pStato;
+		
+		} else { // altrimenti ho un utente loggato
+			
+			// caso di utente collegato e lo stato è bozza
+			// devo restituire solamente i suoi articoli in bozza
+			if (Stato.bozza.getValore().equals(params.get("stato"))) {
+		
+				Predicate pStato = cb.equal(art.get(Articolo_.stato), params.get("stato"));
+				Predicate pAutore = cb.equal(art.get(Articolo_.autore), userId);
+				finalPredicateStato = cb.and(pStato, pAutore);
+			
+			// lo stato è diverso, allora posso restituire tutto
+			} else {
+				
+				// devo mostrare sia gli articoli pubblicati che quelli in bozza dell'utente.
+				Predicate pStatoBozza = cb.equal(art.get(Articolo_.stato), Stato.bozza.getValore());
+				Predicate pAutore = cb.equal(art.get(Articolo_.autore), userId);
+
+				Predicate pStatoPubblicato = cb.equal(art.get(Articolo_.stato), Stato.pubblicato.getValore());
+				
+				finalPredicateStato = cb.and(pStatoBozza, pAutore);
+				finalPredicateStato = cb.or(finalPredicateStato, pStatoPubblicato);
+			}
+			
 		}
+			
+		if (finalPredicateStato != null) {
+			predicates.add(finalPredicateStato);
+		}
+	
+		// ################# FINE GESTIONE STATO ARTICOLI ####################
 		
 		// Aggiungo i predicates alla query
 		Predicate finalPredicate = cb.and(predicates.toArray(new Predicate[0]));

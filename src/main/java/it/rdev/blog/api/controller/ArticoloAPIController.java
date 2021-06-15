@@ -40,43 +40,30 @@ public class ArticoloAPIController {
 	
 	@Autowired
 	private ArticoloDetailsService articoloService;
-	
-	/* path provvisoria per testare il funzionamento di filtri.
-	 * creata per non mischare la logica del metodo get con quella dei filtri.
-	 * 
-	 * Per ora la ricerca avviene su tutti gli articoli, anche su quelli 
-	 * che non dovrebbero essere accessibili.
-	 * 
-	 * TODO Una volta fatti i dovuti test eliminare questo metodo.
-	 *  */
-	@RequestMapping(path = "/filter", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	public List<ArticoloDTO> getTest(
-			@RequestParam(required = false) Map<String, String> params) {
+
 		
-		return articoloService.getByFilters(params);
-	}
-	
-	
 	@RequestMapping(path = "", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public List<ArticoloDTO> get(
 			@RequestHeader(required = false, value = "Authorization") String token,
 			@RequestParam(required = false) Map<String, String> params) {
 		
-		List<ArticoloDTO> list= new ArrayList<>();
+		List<ArticoloDTO> list;
 		
 		// se l'utente ha un token
 		if (token != null) {
 			// recupero l'id dell'utente
 			Long userId = jwtUtil.getUserIdFromToken(token);
-			
-			// recupero gli articoli pubblici e le bozze dell'utente.
-			list = articoloService.getPubbliciAndBozze(userId);
+					
+			list = articoloService.getByFilters(params, userId);
 			
 		} else { // utente anonimo
-			// Restituisco gli articoli che hanno lo stato pubblicato
-			list = articoloService.getbyStato(Stato.pubblicato);
+			
+			// Restituisco solo gli articoli che hanno lo stato pubblicato.
+			// Eventuali filtri sullo stato verranno sovrascritti.
+			params.put("stato", Stato.pubblicato.getValore());
+			
+			list = articoloService.getByFilters(params);
 			
 		}
 		
