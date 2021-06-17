@@ -13,10 +13,10 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
-import it.rdev.blog.api.controller.dto.PageDTO;
 import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Articolo_;
 import it.rdev.blog.api.dao.entity.Tag;
@@ -29,6 +29,9 @@ import it.rdev.blog.api.dao.entity.User_;
 @Component
 public class ArticoloDAOEM {
 
+	@Value("${default.page.size}")
+	private int defaultPageSize;
+	
 	@PersistenceContext
 	private EntityManager entityManager;
 	
@@ -59,12 +62,72 @@ public class ArticoloDAOEM {
 	 * @return			la lista di articoli recupaerata dal database.
 	 * 
 	 * */
-	public PageDTO<Articolo> find(Map<String, String> params, Long userId) {
-		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Articolo> c = cb.createQuery(Articolo.class);
-		Root<Articolo> art = c.from(Articolo.class);
-		c.select(art);
+	public List<Articolo> find(Map<String, String> params, Long userId) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Articolo> criteriaQuery = criteriaBuilder.createQuery(Articolo.class);
+		Root<Articolo> art = criteriaQuery.from(Articolo.class);
 		
+		criteriaQuery.select(art);
+		
+		// Aggiungo i predicates alla query
+		Predicate finalPredicate = criteriaBuilder.and(
+				getPredicates(params, userId, criteriaBuilder, art).toArray(new Predicate[0]));
+
+		criteriaQuery.where(finalPredicate);
+		
+		
+		// ################# PAGING #################
+		
+		int pageSize;
+		int pageNum;
+		
+		try {
+			pageSize = Integer.parseInt(params.get("count"));
+		} catch (NumberFormatException e) {
+			// se il parametro passato non è presente oppure 
+			// non è corretto allora imposto il valore di default
+			pageSize = defaultPageSize;
+		}
+		
+		try {
+			pageNum = Integer.parseInt(params.get("page"));
+		} catch (NumberFormatException e) {
+			pageNum = 1;
+		}
+		
+		TypedQuery<Articolo> q = entityManager.createQuery(criteriaQuery);
+		q.setFirstResult((pageNum - 1) * pageSize );
+	    q.setMaxResults(pageSize);
+		return q.getResultList();
+		
+	}
+	
+	
+	public long total(Map<String, String> params, Long userId) {
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+		Root<Articolo> art = countQuery.from(Articolo.class);
+		
+		countQuery.select(criteriaBuilder
+				  .count(art));
+		
+		// Aggiungo i predicates alla query
+		Predicate finalPredicate = criteriaBuilder.and(
+				getPredicates(params, userId, criteriaBuilder, art).toArray(new Predicate[0]));
+
+		countQuery.where(finalPredicate);
+		
+		return entityManager.createQuery(countQuery)
+				  .getSingleResult();
+
+	}
+	
+	
+	private List<Predicate> getPredicates(Map<String, String> params, 
+											Long userId, 
+											CriteriaBuilder criteriaBuilder, 
+											Root<Articolo> art ) {
+	
 		// Lista di predicati da mettere in and tra loro
 		List<Predicate> predicates = new ArrayList<Predicate>(); 
 		
@@ -72,12 +135,12 @@ public class ArticoloDAOEM {
 		if (params.get("testo") != null) {
 			
 			// Devo aggiungere alla query la ricerca all'interno di titolo, sottotitolo e testo;
-			Predicate pTitolo = cb.like(art.get(Articolo_.titolo), "%" + params.get("testo") + "%");
-			Predicate pSottotitolo = cb.like(art.get(Articolo_.sottotitolo), "%" + params.get("testo") + "%");
-			Predicate pTesto = cb.like(art.get(Articolo_.testo), "%" + params.get("testo") + "%");
+			Predicate pTitolo = criteriaBuilder.like(art.get(Articolo_.titolo), "%" + params.get("testo") + "%");
+			Predicate pSottotitolo = criteriaBuilder.like(art.get(Articolo_.sottotitolo), "%" + params.get("testo") + "%");
+			Predicate pTesto = criteriaBuilder.like(art.get(Articolo_.testo), "%" + params.get("testo") + "%");
 			
 			// Aggiungo in or
-			predicates.add(cb.or(pTitolo, pSottotitolo, pTesto));
+			predicates.add(criteriaBuilder.or(pTitolo, pSottotitolo, pTesto));
 		
 		}
 		
@@ -85,7 +148,7 @@ public class ArticoloDAOEM {
 		if (params.get("categoria") != null) {
 			
 			// Devo aggiungere alla query la ricerca per categoria
-			Predicate pCategoria = cb.equal(art.get(Articolo_.categoria), params.get("categoria"));
+			Predicate pCategoria = criteriaBuilder.equal(art.get(Articolo_.categoria), params.get("categoria"));
 			
 			// Aggiungo il predicato
 			predicates.add(pCategoria);
@@ -101,7 +164,7 @@ public class ArticoloDAOEM {
 			Join<Articolo, User> user = art.join(Articolo_.autore);
 			
 			// Devo aggiungere alla query la ricerca per categoria
-			Predicate pAutore = cb.equal(user.get(User_.username), params.get("autore"));
+			Predicate pAutore = criteriaBuilder.equal(user.get(User_.username), params.get("autore"));
 			
 			// Aggiungo il predicato
 			predicates.add(pAutore);
@@ -116,7 +179,7 @@ public class ArticoloDAOEM {
 			Join<Articolo, Tag> tag = art.join(Articolo_.tags);
 			
 			// Devo aggiungere alla query la ricerca per categoria
-			Predicate pAutore = cb.equal(tag.get(Tag_.tag), params.get("tag"));
+			Predicate pAutore = criteriaBuilder.equal(tag.get(Tag_.tag), params.get("tag"));
 			
 			// Aggiungo il predicato
 			predicates.add(pAutore);
@@ -133,7 +196,7 @@ public class ArticoloDAOEM {
 		// se l'utente è anonimo oppure lo stato è pubblicato, allora mostro solo articoli pubblici.
 		if (userId == null || 
 				Stato.pubblicato.getValore().equals(params.get("stato"))) {
-			Predicate pStato = cb.equal(art.get(Articolo_.stato), Stato.pubblicato.getValore());
+			Predicate pStato = criteriaBuilder.equal(art.get(Articolo_.stato), Stato.pubblicato.getValore());
 			finalPredicateStato = pStato;
 		
 		} else { // altrimenti ho un utente loggato
@@ -142,21 +205,21 @@ public class ArticoloDAOEM {
 			// devo restituire solamente i suoi articoli in bozza
 			if (Stato.bozza.getValore().equals(params.get("stato"))) {
 		
-				Predicate pStato = cb.equal(art.get(Articolo_.stato), params.get("stato"));
-				Predicate pAutore = cb.equal(art.get(Articolo_.autore), userId);
-				finalPredicateStato = cb.and(pStato, pAutore);
+				Predicate pStato = criteriaBuilder.equal(art.get(Articolo_.stato), params.get("stato"));
+				Predicate pAutore = criteriaBuilder.equal(art.get(Articolo_.autore), userId);
+				finalPredicateStato = criteriaBuilder.and(pStato, pAutore);
 			
 			// lo stato è diverso, allora posso restituire tutto
 			} else {
 				
 				// devo mostrare sia gli articoli pubblicati che quelli in bozza dell'utente.
-				Predicate pStatoBozza = cb.equal(art.get(Articolo_.stato), Stato.bozza.getValore());
-				Predicate pAutore = cb.equal(art.get(Articolo_.autore), userId);
+				Predicate pStatoBozza = criteriaBuilder.equal(art.get(Articolo_.stato), Stato.bozza.getValore());
+				Predicate pAutore = criteriaBuilder.equal(art.get(Articolo_.autore), userId);
 
-				Predicate pStatoPubblicato = cb.equal(art.get(Articolo_.stato), Stato.pubblicato.getValore());
+				Predicate pStatoPubblicato = criteriaBuilder.equal(art.get(Articolo_.stato), Stato.pubblicato.getValore());
 				
-				finalPredicateStato = cb.and(pStatoBozza, pAutore);
-				finalPredicateStato = cb.or(finalPredicateStato, pStatoPubblicato);
+				finalPredicateStato = criteriaBuilder.and(pStatoBozza, pAutore);
+				finalPredicateStato = criteriaBuilder.or(finalPredicateStato, pStatoPubblicato);
 			}
 			
 		}
@@ -167,38 +230,8 @@ public class ArticoloDAOEM {
 	
 		// ################# FINE GESTIONE STATO ARTICOLI ####################
 		
-		// Aggiungo i predicates alla query
-		Predicate finalPredicate = cb.and(predicates.toArray(new Predicate[0]));
-		c.where(finalPredicate);
-		
-		
-		// ################# PAGING #################
-		
-		int pageSize;
-		int pageNum;
-		
-		try {
-			pageSize = Integer.parseInt(params.get("count"));
-		} catch (NumberFormatException e) {
-			pageSize = 10;
-		}
-		
-		try {
-			pageNum = Integer.parseInt(params.get("page"));
-		} catch (NumberFormatException e) {
-			pageNum = 1;
-		}
-		
-		TypedQuery<Articolo> q = entityManager.createQuery(c);
-		q.setFirstResult((pageNum - 1) * pageSize );
-	    q.setMaxResults(pageSize);
-	    
-	    PageDTO<Articolo> page = new PageDTO<>();
-	    
-	    page.setContenuto(q.getResultList());
-	    
-		return page;
-		
+		return predicates;
+
 	}
 	
 }

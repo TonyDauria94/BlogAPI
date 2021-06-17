@@ -93,8 +93,8 @@ public class ArticoloAPIController {
 			
 		}
 		
-		// Se la pagina contiene una lista nulla o vuota, lancio una eccezione.
-		if(page.getContenuto() != null && page.getContenuto().isEmpty()) 
+		// Se la pagina è nulla lancio una eccezione.
+		if(page == null) 
 			throw new ResourceNotFoundException("Non sono presenti articoli.");
 		
 		return page;

@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
@@ -20,6 +21,9 @@ import it.rdev.blog.api.service.ArticoloDetailsService;
 
 @Service
 public class ArticoloDetailsServiceImpl implements ArticoloDetailsService {
+	
+	@Value("${default.page.size}")
+	private int defaultPageSize;
 
 	@Autowired
 	private ArticoloDAO articoloDao;
@@ -95,13 +99,46 @@ public class ArticoloDetailsServiceImpl implements ArticoloDetailsService {
 	
 	@Override
 	public PageDTO<ArticoloDTO> getByFilters(Map<String, String> filters, Long userId) {
-		Iterable<Articolo> it = articoloDaoEm.find(filters, userId).getContenuto();
+		// conto il numero di risultati.
+		long total = articoloDaoEm.total(filters, userId);
+		
+		// Se il numero di risultati è <= di 0, allora è inutile 
+		// eseguire la query successiva
+		if(total <= 0) {
+			return null;
+		}
+		
+		// Recupero gli articoli
+		Iterable<Articolo> it = articoloDaoEm.find(filters, userId);
+		
+		// Converto gli articoli in DTO
 		List<ArticoloDTO> list = new ArrayList<>();
 		for (Articolo a : it) {
 			list.add(toDto(a));
 		}
+		
+		// Se la lista di elementi è vuota, allora non sono stati trovati elementi
+		if(list.isEmpty()) {
+			return null;
+		}
+		
+		// Impostazioni pagina
 		PageDTO<ArticoloDTO> page = new PageDTO<>();
+
 		page.setContenuto(list);
+		page.setTotaleRisultati(total);
+		
+		page.setPaginaCorrente(Integer.parseInt(filters.getOrDefault("page", "1")));
+		
+		
+		int numeroElementiPerPagina = Integer.parseInt(filters.getOrDefault("count", String.valueOf(defaultPageSize)));
+		
+		// calcolo l'ultima pagina
+		// faccio il casting a double, altrimenti il calcolo mi restituirebbe già un numero arrotondato.
+		int ultimaPagina = (int) Math.ceil((double) total / (double) numeroElementiPerPagina);
+		
+		page.setUltimaPagina(ultimaPagina);
+		
 		return page;
 	}
 	
