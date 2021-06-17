@@ -2,7 +2,6 @@ package it.rdev.blog.api.controller;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 import org.hibernate.PropertyValueException;
@@ -23,6 +22,7 @@ import it.rdev.blog.api.config.JwtTokenUtil;
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
 import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
 import it.rdev.blog.api.controller.dto.ExceptionDTO;
+import it.rdev.blog.api.controller.dto.PageDTO;
 import it.rdev.blog.api.exception.NotTheAuthorException;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
 import it.rdev.blog.api.service.ArticoloDetailsService;
@@ -66,11 +66,11 @@ public class ArticoloAPIController {
 	 * */
 	@RequestMapping(path = "", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public List<ArticoloDTO> get(
+	public PageDTO<ArticoloDTO> get(
 			@RequestHeader(required = false, value = "Authorization") String token,
 			@RequestParam(required = false) Map<String, String> params) {
 		
-		List<ArticoloDTO> list;
+		PageDTO<ArticoloDTO> page;
 		
 		// Se il parametro testo ha meno di 3 caratteri, allora lancio una eccezione
 		if (params.get("testo") != null && params.get("testo").length() < 3)
@@ -84,20 +84,20 @@ public class ArticoloAPIController {
 			// Effettuo la query utilizzando i filtri passati nella queryStrig
 			// passo al metodo anche l'id dell'utente loggato, in modo che
 			// possa restituirgli anche eventuali suoi articoli personali in stato bozza
-			list = articoloService.getByFilters(params, userId);
+			page = articoloService.getByFilters(params, userId);
 			
 		} else { // utente anonimo
 			
 			// Effettuo la query in modalità utente anonimo.
-			list = articoloService.getByFilters(params);
+			page = articoloService.getByFilters(params);
 			
 		}
 		
-		// Se la lista è vuota lancio una ResourceNotFoundException.
-		if(list.isEmpty()) 
+		// Se la pagina contiene una lista nulla o vuota, lancio una eccezione.
+		if(page.getContenuto() != null && page.getContenuto().isEmpty()) 
 			throw new ResourceNotFoundException("Non sono presenti articoli.");
 		
-		return list;
+		return page;
 	}
 	
 	/* Restituisce un articolo dato il suo id. */

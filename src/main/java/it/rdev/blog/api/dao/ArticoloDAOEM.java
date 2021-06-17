@@ -16,6 +16,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Component;
 
 import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
+import it.rdev.blog.api.controller.dto.PageDTO;
 import it.rdev.blog.api.dao.entity.Articolo;
 import it.rdev.blog.api.dao.entity.Articolo_;
 import it.rdev.blog.api.dao.entity.Tag;
@@ -58,7 +59,7 @@ public class ArticoloDAOEM {
 	 * @return			la lista di articoli recupaerata dal database.
 	 * 
 	 * */
-	public List<Articolo> find(Map<String, String> params, Long userId) {
+	public PageDTO<Articolo> find(Map<String, String> params, Long userId) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Articolo> c = cb.createQuery(Articolo.class);
 		Root<Articolo> art = c.from(Articolo.class);
@@ -129,7 +130,7 @@ public class ArticoloDAOEM {
 		// che può essere bozza o pubblicato
 		Predicate finalPredicateStato = null;
 		
-		// se l'utente loggato è anonimo oppure lo stato è pubblicato, allora mostro solo articoli pubblici.
+		// se l'utente è anonimo oppure lo stato è pubblicato, allora mostro solo articoli pubblici.
 		if (userId == null || 
 				Stato.pubblicato.getValore().equals(params.get("stato"))) {
 			Predicate pStato = cb.equal(art.get(Articolo_.stato), Stato.pubblicato.getValore());
@@ -191,7 +192,12 @@ public class ArticoloDAOEM {
 		TypedQuery<Articolo> q = entityManager.createQuery(c);
 		q.setFirstResult((pageNum - 1) * pageSize );
 	    q.setMaxResults(pageSize);
-		return q.getResultList();
+	    
+	    PageDTO<Articolo> page = new PageDTO<>();
+	    
+	    page.setContenuto(q.getResultList());
+	    
+		return page;
 		
 	}
 	

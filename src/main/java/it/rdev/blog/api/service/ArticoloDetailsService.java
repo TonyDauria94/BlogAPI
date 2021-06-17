@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
+import it.rdev.blog.api.controller.dto.PageDTO;
 
 public interface ArticoloDetailsService {
 
@@ -37,12 +38,12 @@ public interface ArticoloDetailsService {
 	 * @param filters 	mappa di filtri
 	 * @param iserId	Identificativo dell'utente che si è loggato
 	 * */
-	public List<ArticoloDTO> getByFilters(Map<String, String> filters, Long userId);
+	public PageDTO<ArticoloDTO> getByFilters(Map<String, String> filters, Long userId);
 	
 	
 	/* Effettua una ricerca pr gli utenti anonimi utilizzando i filtri passati tramite la mappa 
 	 * 
 	 * @param filters 	mappa di filtri
 	 * */
-	public List<ArticoloDTO> getByFilters(Map<String, String> filters);
+	public PageDTO<ArticoloDTO> getByFilters(Map<String, String> filters);
 }

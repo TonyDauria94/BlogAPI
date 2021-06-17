@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
 import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
+import it.rdev.blog.api.controller.dto.PageDTO;
 import it.rdev.blog.api.dao.ArticoloDAO;
 import it.rdev.blog.api.dao.ArticoloDAOEM;
 import it.rdev.blog.api.dao.entity.Articolo;
@@ -93,18 +94,19 @@ public class ArticoloDetailsServiceImpl implements ArticoloDetailsService {
 	}
 	
 	@Override
-	public List<ArticoloDTO> getByFilters(Map<String, String> filters, Long userId) {
-		Iterable<Articolo> it = articoloDaoEm.find(filters, userId);
+	public PageDTO<ArticoloDTO> getByFilters(Map<String, String> filters, Long userId) {
+		Iterable<Articolo> it = articoloDaoEm.find(filters, userId).getContenuto();
 		List<ArticoloDTO> list = new ArrayList<>();
 		for (Articolo a : it) {
 			list.add(toDto(a));
 		}
-		
-		return list;
+		PageDTO<ArticoloDTO> page = new PageDTO<>();
+		page.setContenuto(list);
+		return page;
 	}
 	
 	@Override
-	public List<ArticoloDTO> getByFilters(Map<String, String> filters) {
+	public PageDTO<ArticoloDTO> getByFilters(Map<String, String> filters) {
 		// Richiamo il getByFilters settando a null l'id dell'utente
 		// In modo che vengano mostrati solamente gli articoli pubblicati
 		return getByFilters(filters, null);
