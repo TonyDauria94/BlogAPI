@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import it.rdev.blog.api.controller.dto.ArticoloDTO;
 import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
 import it.rdev.blog.api.controller.dto.PageDTO;
+import it.rdev.blog.api.controller.dto.UserDTO;
 import it.rdev.blog.api.dao.ArticoloDAO;
 import it.rdev.blog.api.dao.ArticoloDAOEM;
 import it.rdev.blog.api.dao.entity.Articolo;
@@ -174,8 +175,12 @@ public class ArticoloDetailsServiceImpl implements ArticoloDetailsService {
 		}
 		
 		dto.setStato(stato);
-		dto.setAutore(a.getAutore().getUsername());
-		dto.setAutoreId(a.getAutore().getId());
+		
+		UserDTO autore = new UserDTO();
+		autore.setId(a.getAutore().getId());
+		autore.setUsername(a.getAutore().getUsername());
+		dto.setAutore(autore);
+		
 		dto.setCategoria(a.getCategoria());
 		
 		List<String> tags = new ArrayList<>();
@@ -202,9 +207,12 @@ public class ArticoloDetailsServiceImpl implements ArticoloDetailsService {
 		a.setStato(dto.getStato());
 		
 		User u = new User();
-		u.setId(dto.getAutoreId());
-		u.setUsername(dto.getAutore());
-		a.setAutore(u);
+		UserDTO udto = dto.getAutore();
+		if (udto != null) {
+			u.setId(udto.getId());
+			u.setUsername(udto.getUsername());
+			a.setAutore(u);
+		}
 		
 		a.setCategoria(dto.getCategoria());
 		

@@ -23,6 +23,7 @@ import it.rdev.blog.api.controller.dto.ArticoloDTO;
 import it.rdev.blog.api.controller.dto.ArticoloDTO.Stato;
 import it.rdev.blog.api.controller.dto.ExceptionDTO;
 import it.rdev.blog.api.controller.dto.PageDTO;
+import it.rdev.blog.api.controller.dto.UserDTO;
 import it.rdev.blog.api.exception.NotTheAuthorException;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
 import it.rdev.blog.api.service.ArticoloDetailsService;
@@ -153,8 +154,11 @@ public class ArticoloAPIController {
 			// Questo sovrascrive anche eventuali nomi di autori inseriti
 			// in input dall'utente, rendendo inpossibile l'aggiunta di un articolo
 			// con un nome utente diverso da quello dell'utente loggato.
-			articolo.setAutoreId(id);
-			articolo.setAutore(username);
+			UserDTO autore = new UserDTO();
+			autore.setId(id);
+			autore.setUsername(username);
+			articolo.setAutore(autore);
+			
 			
 			// imposto data creazione, data modifica.
 			// Trattandosi di un nuovo articolo, le imposto alla data attuale.
@@ -191,7 +195,7 @@ public class ArticoloAPIController {
 			if (articoloDb == null) throw new ResourceNotFoundException("Articolo non trovato");
 			
 			// se l'articolo ha un autore differente dall'utente loggato
-			if (articoloDb.getAutoreId() != id)
+			if (articoloDb.getAutore() != null && articoloDb.getAutore().getId()  != id)
 				throw new NotTheAuthorException("Gli articoli possono essere modificati"
 						+ " solamente dal proprio autore");
 		
@@ -246,7 +250,7 @@ public class ArticoloAPIController {
 			if (articolo == null) throw new ResourceNotFoundException("Articolo non trovato");
 			
 			// se l'autore dell'articolo non è l'utente loggato, lancio l'eccezione
-			if (articolo.getAutoreId() != userId) 
+			if (articolo.getAutore()!=null && articolo.getAutore().getId() != userId) 
 				throw new NotTheAuthorException("Gli articoli possono essere eliminati"
 												+ " solo dal proprio autore");
 			

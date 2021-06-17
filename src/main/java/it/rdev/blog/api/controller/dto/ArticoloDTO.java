@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
 public class ArticoloDTO {
 	
 	/** Enumeratore per lo stato dell'articolo.
@@ -52,12 +53,8 @@ public class ArticoloDTO {
 	private LocalDateTime dataCreazione;
 	private Stato stato;
 	
-	private String autore;
+	private UserDTO autore;
 	
-	// Salvo anche l'id dell'autore, ma ignoro il campo in caso di serializzazione.
-	// Questo campo ci farà risparmiare qualche query.
-	@JsonIgnore
-	private Long autoreId;
 	private String categoria;
 	private List<String> tags;
 	
@@ -123,25 +120,22 @@ public class ArticoloDTO {
 			return stato.getValore();
 		return null;
 	}
+	
+	@JsonIgnore
+	public Stato getStatoEnum() {
+		return stato;
+	}
 
 	public void setStato(Stato stato) {
 		this.stato = stato;
 	}
 
-	public String getAutore() {
+	public UserDTO getAutore() {
 		return autore;
 	}
 
-	public void setAutore(String autore) {
+	public void setAutore(UserDTO autore) {
 		this.autore = autore;
-	}
-
-	public Long getAutoreId() {
-		return autoreId;
-	}
-
-	public void setAutoreId(Long autoreId) {
-		this.autoreId = autoreId;
 	}
 
 	public String getCategoria() {
