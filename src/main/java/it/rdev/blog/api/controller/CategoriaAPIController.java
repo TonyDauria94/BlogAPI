@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import it.rdev.blog.api.controller.dto.CategoriaDTO;
+import it.rdev.blog.api.controller.dto.ExceptionDTO;
 import it.rdev.blog.api.exception.ResourceNotFoundException;
 import it.rdev.blog.api.service.CategoriaDetailsService;
 
@@ -43,10 +45,20 @@ public class CategoriaAPIController {
 	 * nel caso in cui ciò accada, il controller invierà al client 
 	 * una response con HttpStatus 404.
 	 * */
-	@ExceptionHandler(RuntimeException.class)
+	@ExceptionHandler(ResourceNotFoundException.class)
 	@ResponseStatus(code = HttpStatus.NOT_FOUND)
-	public String resourceNotFoundException(RuntimeException ex) {
-		return ex.getMessage();
+	public ExceptionDTO handleRuntimeException(ResourceNotFoundException ex) {
+		return new ExceptionDTO()
+				.setEccezione(ex.getClass().getName())
+				.setMessaggio(ex.getMessage());
 	}
 	
+	/* Gestisce eccezione lanciata quando viene utilizzato un token scaduto. */
+	@ExceptionHandler(ExpiredJwtException.class)
+	@ResponseStatus(code = HttpStatus.BAD_REQUEST)
+	public ExceptionDTO handleExpiredJwtExceptionException(ExpiredJwtException ex) {
+		return new ExceptionDTO()
+				.setEccezione(ex.getClass().getName())
+				.setMessaggio("Token scaduto!");
+	}
 }
