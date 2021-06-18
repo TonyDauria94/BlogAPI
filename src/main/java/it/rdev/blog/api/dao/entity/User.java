@@ -13,9 +13,11 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+	
 	@Column
 	private String username;
-	@Column
+	
+	@Column(nullable = false)
 	@JsonIgnore
 	private String password;
 	
@@ -37,7 +39,7 @@ public class User {
 	}
 
 	public void setUsername(String username) {
-		if(username != null && !username.equals(""))
+		if (username != null && !username.equals(""))
 			this.username = username;
 	}
 

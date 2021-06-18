@@ -1,6 +1,7 @@
 package it.rdev.blog.api.controller.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class UserDTO {
 	
@@ -24,7 +25,7 @@ public class UserDTO {
 		this.username = username;
 	}
 
-	@JsonIgnore
+	@JsonInclude(Include.NON_NULL)
 	public String getPassword() {
 		return password;
 	}

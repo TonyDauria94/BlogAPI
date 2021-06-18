@@ -25,3 +25,28 @@ jwt:
 default:
   page:
     size: 10
+
+#server:
+#  port: 8080
+#
+#spring:
+#  datasource:
+#    url: jdbc:mysql://192.168.1.200:3306/testdb
+#    username: Pippo
+#    password: password
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  jpa:
+#    show-sql: true
+#    format-sql: true
+#
+#jwt:
+#  token:
+#    type: Bearer
+#  header: Authorization
+#  secret: password01
+#  expiration: 10000
+#
+#
+#default:
+#  page:
+#    size: 10

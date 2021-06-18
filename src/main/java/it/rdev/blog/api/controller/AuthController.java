@@ -29,8 +29,11 @@ public class AuthController {
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
-	@Autowired
 	private BlogUserDetailsService userDetailsService;
+	
+	public AuthController(@Autowired BlogUserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
 
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
