@@ -38,6 +38,11 @@ public class JwtTokenUtil implements Serializable {
 			return getClaimFromToken(token, Claims::getSubject);
 	}
 	
+	/**
+	 * Metodo che recupera l'id dell'utente dal token JWT
+	 * @param token Stringa che rappresenta il token da cui recuperare lo username
+	 * @return String che rappresenta lo username dell'utente loggato
+	 */
 	public Long getUserIdFromToken(String token) {
 		// se il token comincia con bearer, lo rimuovo
 		if (token != null && token.startsWith("Bearer "))

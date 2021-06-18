@@ -3,18 +3,18 @@ package it.rdev.blog.api;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(webEnvironment=RANDOM_PORT)
-@Sql({"/database_init.sql"})
-class BlogApiApplicationTests {
+@DisplayName("<= BlogApiIntegration Test =>")
+class BlogApiIntegrationTests extends TestDbInit {
 	
 	private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -23,8 +23,11 @@ class BlogApiApplicationTests {
 	
 	@BeforeAll
     public static void setup() { }
+	
+	private BlogApiIntegrationTests() {}
 
 	@Test
+	@DisplayName("verifica recupero \"risorse\" senza effettuare la login")
 	void testResourcesWithoutUser() {
 		/**
 		 * Provo a recuperare una risorsa non protetta
@@ -43,8 +46,13 @@ class BlogApiApplicationTests {
 			.accept(MediaType.APPLICATION_JSON)
 			.exchange()
 			.expectStatus()
-			// Mi aspetto che venga restituito isUnauthorized
+			// Mi aspetto che venga restituito un HttpStatus 401 (isUnauthorized)
 			.isUnauthorized();
+		
+	}
+	
+	@Test
+	void provaTestUno() {
 		
 	}
 	

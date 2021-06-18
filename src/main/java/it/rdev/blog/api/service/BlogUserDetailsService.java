@@ -20,9 +20,14 @@ public class BlogUserDetailsService implements UserDetailsService {
 	@Autowired
 	private UserDAO userDao;
 
+
 	@Autowired
 	private PasswordEncoder bcryptEncoder;
 
+	public BlogUserDetailsService(@Autowired UserDAO userDao) {
+		this.userDao = userDao;
+	}
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userDao.findByUsername(username);

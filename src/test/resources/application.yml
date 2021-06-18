@@ -1,3 +1,7 @@
+logging:
+  level:
+    root: INFO
+
 spring:
   datasource:
     url: jdbc:h2:mem:testdb
@@ -17,3 +21,7 @@ jwt:
   header: Authorization
   secret: password01
   expiration: 7200
+
+default:
+  page:
+    size: 10
