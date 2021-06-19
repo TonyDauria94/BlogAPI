@@ -116,16 +116,16 @@ public class ArticoloAPIController {
 			throw new ResourceNotFoundException("Articolo non trovato");
 		
 		// Se l'articolo è una bozza
-		if (Stato.bozza.getValore().equals(articolo.getStato())) {
+		if (articolo.getStatoEnum() == Stato.bozza) {
 			
 			// se l'utente ha un token
 			if (token != null) {
-				// recupero lo username dell'utente
-				String username = jwtUtil.getUsernameFromToken(token);
+				// recupero l'id dell'utente
+				long userId = jwtUtil.getUserIdFromToken(token);
 				
-				// se lo username non coincide con quello dell'articolo
+				// se l'id non coincide con quello dell'articolo
 				// lancia una eccezione.
-				if(!username.equals(articolo.getAutore())) {
+				if(userId != articolo.getAutore().getId()) {
 					throw new ResourceNotFoundException("Articolo non trovato");
 				}
 			} else { // l'utente non ha un token
