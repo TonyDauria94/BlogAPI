@@ -2,7 +2,7 @@ package it.rdev.blog.api;
 
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,6 +18,7 @@ import it.rdev.blog.api.dao.entity.Categoria;
 @SpringBootTest(webEnvironment=RANDOM_PORT)
 @DisplayName("<= ArticoloApiIntegration Test =>")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Sql(scripts = {"/database_init.sql"})
 public class ArticoloApiIntegrationTests {
 
 	@Autowired
@@ -26,14 +27,23 @@ public class ArticoloApiIntegrationTests {
 	@Autowired
 	private CategoriaDAO categoriaDao;
 
+	private boolean init = false;
+	
 	private String tokenTony;
 	private String tokenDani;
 	
 	// Prima di tutto registro due utenti e ne recupero i token.
 	// inizializzo il db una sola volta ad inizio test.
-	@BeforeAll
-	@Sql({"/database_init.sql"})
+
+	// BeforeAll viene eseguito prima dell'inizializzazione del db,
+	// per questo motivo utilizzo beforeEach ed un booleano per eseguire
+	// l'inizializzazione solamente una volta, prima del il primo test.
+	@BeforeEach
     public void setup() { 
+		
+		if (init) {
+			return;
+		}
 		
 		// registro alcuni utenti alla piattaforma
 		register("tony", "passtony");
@@ -66,6 +76,8 @@ public class ArticoloApiIntegrationTests {
 					+ "\"categoria\": \"cat2\"}")
 			.exchange().expectStatus().isNoContent();
 			}
+		
+		init = true;
 	}
 	
 	

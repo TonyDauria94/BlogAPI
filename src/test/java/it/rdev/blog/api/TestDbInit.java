@@ -9,7 +9,7 @@ import it.rdev.blog.api.dao.CategoriaDAO;
 import it.rdev.blog.api.dao.TagDAO;
 import it.rdev.blog.api.dao.UserDAO;
 
-@Sql({"/database_init.sql"})
+@Sql(scripts = {"/database_init.sql"})
 public class TestDbInit {
 	
 	// NON STATIC CON FOREACH ED AFTEREACH
