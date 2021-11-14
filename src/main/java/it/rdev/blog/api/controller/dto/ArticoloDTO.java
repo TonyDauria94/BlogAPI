@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
+/*DTO per l'articolo*/
 public class ArticoloDTO {
 	
 	/** Enumeratore per lo stato dell'articolo.
