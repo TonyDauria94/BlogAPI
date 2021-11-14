@@ -1,5 +1,6 @@
 package it.rdev.blog.api.controller.dto;
 
+/*CategoriaDTO*/
 public class CategoriaDTO {
 
 	private String categoria;
